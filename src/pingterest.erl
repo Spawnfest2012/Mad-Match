@@ -15,6 +15,7 @@
 %% --------------------------------------------------------------------
 -spec start() -> ok | {error, term()}.
 start() ->
+  application:start(cowboy),
   application:start(?MODULE).
 
 -spec start(any(),any()) -> {ok, pid()} | {error, any()}. 
