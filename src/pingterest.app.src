@@ -1,0 +1,11 @@
+{application, pingterest, 
+[
+  {description, "Pingterest: Social Pinging"},
+  {vsn, "0.0.0"},
+  {applications, [kernel, stdlib, inets]},
+  {mod, {pingterest, []}},
+  {env, [
+  
+  ]}
+]
+}.
