@@ -10,7 +10,7 @@
 
 -spec find(integer()) -> [#user{}].
 find(Id) -> 
-  Result = ping_db:find(?USER_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Id]))}]}]),
+Result = ping_db:find(?USER_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Id]))}]}]),
   emysql_util:as_record(
 		Result, user, record_info(fields, user)).
   
