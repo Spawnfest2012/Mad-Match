@@ -14,3 +14,6 @@
 -record(event,{ type      :: pinger_down | pinger_up,
                 pinger_id :: pos_integer(),
                 down_time :: pos_integer()}).
+
+
+-record(user, {id :: pos_integer(),name :: binary(),email :: binary(),password :: binary(),tagline :: binary(),created_at}).
