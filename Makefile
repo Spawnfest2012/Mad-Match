@@ -31,4 +31,4 @@ shell: all
 	fi
 
 run: all
-	${ERL} -boot start_sasl -s crypto -s lager -s emysql -config config/erlang/pingterest -s pingterest; \
+	${ERL} -boot start_sasl -s pingterest; \
