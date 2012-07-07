@@ -6,6 +6,8 @@
 -define(OK, [200, <<"ok">>]).
 -define(CREATED, [201, <<"ok">>]).
 
+-include("records.hrl").
+
 %%
 %% API Functions
 %%
@@ -62,15 +64,16 @@ handle_user('PUT', _Args, Req) ->
 handle_user(_, _, _) ->
   ?NOT_FOUND.
 
-handle_login('POST', _Args, _Req, Session) ->
-  case true of %% ping_db:do_something_with_args
-    true -> 
-      %% please set the uid in the session
-      Uid = 1234,
-      ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
-      ?CREATED;
-    false -> 
-      ?UNAUTHORIZED
+handle_login('POST', _Args, Req, Session) ->
+  {Qs, _} = cowboy_http_req:body_qs(Req),
+  [Email, Pass] = get_parameters(Qs, [<<"email">>, <<"password">>]),
+  case ping_user_db:find(Email, Pass) of
+    [] -> 
+      ?UNAUTHORIZED;
+    [User] ->
+      lager:info("Storing session with user id: ~p\n", [User#user.id]),
+      ping_session:save_session(lists:keystore(uid,1,Session,{uid,User#user.id})),
+      ?CREATED
   end;
 handle_login(_, _, _, _) ->
   ?NOT_FOUND.
