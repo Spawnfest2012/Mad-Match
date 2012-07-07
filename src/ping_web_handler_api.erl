@@ -84,9 +84,8 @@ handle_logout('POST', _Args, _Req, Session) ->
 handle_logout(_, _, _, _) ->
   ?NOT_FOUND.
 
-
 handle_pinger('PUT', _Args, _Req) ->
-  [200, <<"<body>Pinger Created</body>">>];
+	[201, <<"{status: ok}">>];
 handle_pinger('DELETE', _Args, _Req) ->
   [200, <<"<body>Pinger Deleted</body>">>];
 handle_pinger(_, _, _) ->

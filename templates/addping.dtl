@@ -1,0 +1,93 @@
+{% include "head.dtl" %}
+<script type=text/javascript>
+jQuery(function($) {
+
+  $(this).find("a.button").click(function() {
+    if (!$('a.button').hasClass('disabled'))
+    {
+      $('a.button').addClass('disabled');
+      $.ajax({type:'PUT', url: '/api/pinger', data:$('#theform').serialize(), statusCode:
+        { 
+          201: function() {
+                 window.location = '/';
+               },
+          401: function() {
+                 alert('check your fields!');
+                 $('a.button').removeClass('disabled');
+               },
+          404: function() {
+                 alert('check your fields!');
+                 $('a.button').removeClass('disabled');
+               }
+        }
+      });
+    }
+    
+  });
+
+  $("#pinger").change(function() {
+    if ($("#pinger option:selected").val() == "http") {
+        $(".webproto").show();
+    }
+    else {
+        $(".webproto").hide();
+    }
+  });
+
+
+  });
+</script>
+<div id="signup">
+    <div id="signup_header">
+        <img src="/images/pingterest_small.png"/>
+    </div>
+    <h1>Add your Pingterest</h1>
+    <div id="signup_form">
+        <form id="theform">
+
+            <input type="text" id="name" name="name" class="">
+            <label>Name</label>
+            <div id="clear"></div>
+
+            <select id="pinger">
+                <option value="ping">Ping</option>
+                <option value="dns">DNS</option>
+                <option value="http">HTTP</option>
+            </select>
+            <div id="clear"></div>
+
+            <select>
+                <option value="10">10 Seconds</option>
+                <option value="20">20 Seconds</option>
+                <option value="30">30 Seconds</option>
+                <option value="40">40 Seconds</option>
+                <option value="50">50 Seconds</option>
+                <option value="60">1 minute</option>
+            </select>
+            <div id="clear"></div>
+
+            <div class="webproto" style="display:none">
+                <input type="text" id="web_status" name="web_status" class="">
+                <label>Status</label>
+                <div id="clear"></div>
+
+                <select id="web_method">
+                    <option value="get">GET</option>
+                    <option value="post">POST</option>
+                    <option value="put">PUT</option>
+                    <option value="delete">DELETE</option>
+                </select>
+                <div id="clear"></div>
+            </div>
+
+            <input type="text" id="endpoint" name="endpoint" class="">
+            <label class="lefter">Endpoint</label>
+            <div id="clear"></div>
+
+            <a href="#" class="button">
+                I'm Pingterested
+            </a>
+        </form>
+    </div>
+</div>
+{% include "footer.dtl" %}
