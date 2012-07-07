@@ -1,6 +1,6 @@
 %%%-------------------------------------------------------------------
 %%% @author Chad DePue <chad@inakanetworks.com>
-%%% @copyright (C) 2011 Chad DePue <chad@inakanetworks.com>
+%%% @copyright (C) 2012 Chad DePue <chad@inakanetworks.com>
 %%% @doc Simple SMTP Helper. Send mails through SMTP
 %%% @end
 %%%-------------------------------------------------------------------
