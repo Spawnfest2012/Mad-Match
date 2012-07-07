@@ -15,8 +15,9 @@ start_link(_Host,Port) ->
     %% {Host, list({Path, Handler, Opts})}
     {'_', [
           {[],                    ping_web_handler_static, [<<"ui/public">>,<<"index.html">>]},
+          {[<<"index.html">>],    ping_web_handler_static, [<<"ui/public">>,<<"index.html">>]},
           {[<<"static">>, '...'], ping_web_handler_static, []},
-          {<<"test">>,            ping_web_handler, []}
+          {['_'],                 ping_web_handler_catchall, []}
       ]
     }
   ],

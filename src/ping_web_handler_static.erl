@@ -32,7 +32,7 @@ send(Req, PathBins, State) ->
       {ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
       {ok, Req2, State};
     _ ->
-      {ok, Req2} = cowboy_http_req:reply(404, [], <<"404 Not Found :(">>, Req),
+      {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
       {ok, Req2, State}
   end.
 
