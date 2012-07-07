@@ -6,11 +6,15 @@
 
 handle_ping(Pinger) ->
   lager:info("ping_pinger_ping: Pinging"),
-
-  % XXX: Use gen_icmp
   Host = Pinger#pinger.end_point,
-  Status = os:cmd("ping -c 1 "++Host++" &>/dev/null; echo $?"),
-  case Status of
-    "0\n" -> up;
-    _     -> down
+  try
+    case gen_icmp:ping(Host) of
+      [{ok,_,_,_,_}|_] -> up;
+      {ok,_,_,_,_} -> up;
+      [{{error,timeout},_,_}|_] -> down;
+      {{error,timeout},_,_} -> down;
+      _     -> down
+    end
+  catch
+    _:Err -> lager:debug("~p",[Err]),  down
   end.
