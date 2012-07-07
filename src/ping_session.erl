@@ -42,9 +42,9 @@ has_session(Sid) ->
 create_or_update_cowboy_session_request(Req) -> 
   {OldSession,_} = cowboy_http_req:cookie(?PINGTEREST_SESSION, Req),
   lager:warning("old session is ~p ~n",[OldSession]),
-  {Sid, _Proplist} = get_session(OldSession),
-  cowboy_http_req:set_resp_cookie(
-   ?PINGTEREST_SESSION , Sid, [{path, "/"}], Req).
+  {Sid, Proplist} = get_session(OldSession),
+  {cowboy_http_req:set_resp_cookie(
+   ?PINGTEREST_SESSION , Sid, [{path, "/"}], Req),Proplist}.
   
 -spec create_session() -> {term(), tuple()}.
 create_session() -> 
@@ -129,7 +129,7 @@ get_session_id() ->
 new_session(Tid,Uid) -> 
   Sid = get_session_id(),
   Then = ?NEXT_SESSION_TIMEOUT,
-  Proplist = [{uid,Uid}],
+  Proplist = [{uid,Uid},{sid,Sid}],
   ets:insert(Tid,#sid{sid=Sid,time=Then,proplist=Proplist}),
   {Sid,Proplist}.
 

@@ -11,7 +11,7 @@ init({tcp, http}, Req, Opts) ->
   {ok, Req, Opts}.
 
 handle(R, State) ->
-  {ok, Req} = ping_session:create_or_update_cowboy_session_request(R),
+  {{ok, Req}, _Session} = ping_session:create_or_update_cowboy_session_request(R),
   {Method, _}            = cowboy_http_req:method(Req),
   {[_|[Object|Args]], _} = cowboy_http_req:path(Req),
 
