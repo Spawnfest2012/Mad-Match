@@ -16,7 +16,11 @@
 
 body {
   min-width: 1200px;
+  font-family: "helvetica neue",arial,sans-serif;
+  font-size: 10px;
+  color: #211922;
 }
+
 
 /* Containers
 ----------------------------------------------------------------------------------------------------*/
@@ -242,5 +246,34 @@ body {
 
 #signup h1 { 
   text-align:center;
-  font-weight:500;
+  font-weight:300;
+  font-size: 32px;
 }
+
+#signup #signup_header img { 
+  text-align:center;
+  display:block;
+  margin:auto;
+
+}
+
+
+#signup input { 
+
+  margin:auto;
+  display: inline-block; 
+}
+
+#signup a.button {
+
+  display: inline-block; 
+  padding: 0.625em 1em; text-align: center;
+  font-size: 24px;
+  line-height: 1em;
+  color: #fcf9f9;
+  text-shadow: 0 -1px rgba(34,25,25,0.5);
+  background-color: #f3f3f3;
+  border: 1px solid #e7e7e7;
+  text-decoration:none;
+}
+

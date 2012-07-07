@@ -1,5 +1,15 @@
 {% include "head.dtl" %}
 <div id="signup">
+<div id="signup_header">
+<img src="http://passets-ec.pinterest.com/images/LogoRed.png"/>
+</div>
 <h1> Sign up to Pingterest</h1>
+<div id="signup_form">
+<input type="text" id="signup_input" class="">
+
+<a href="#" class="button">
+Sign me up baby
+</a>
+</div>
 </div>
 {% include "footer.dtl" %}
