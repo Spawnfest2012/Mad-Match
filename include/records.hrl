@@ -1,7 +1,7 @@
 -record(pinger,{ id :: pos_integer(),
                  name :: string(),
                  type :: atom() ,
-                 user_id :: pos_integer,
+                 user_id :: pos_integer(),
                  end_point :: string(),
                  frecuency :: pos_integer()
                 }).

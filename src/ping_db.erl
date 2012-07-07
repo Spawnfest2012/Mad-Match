@@ -6,7 +6,7 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start_link/0,stop/1]).
+-export([start_link/0,stop/1,execute/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -23,6 +23,10 @@ start_link() ->
 -spec stop(pid()) -> ok.
 stop(Pid) when is_pid(Pid) -> 
   gen_server:cast(Pid, stop).
+
+-spec execute(binary()) -> term().
+execute(Query) ->
+  emysql:execute(?MODULE, Query).
 
 %% ====================================================================
 %% Server functions
