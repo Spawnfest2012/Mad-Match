@@ -63,17 +63,26 @@ handle_call({create,Table,Fields}, _From, State) ->
   emysql:prepare(list_to_atom("create_" ++Table), list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " ")),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
     {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
-    {error_packet, _, _, Status, Msg} -> {error, Msg}
+    {error_packet, _, _, _, Msg} -> {error, Msg}
   end,
   {reply, Reply, State};
 handle_call({find,Table,Options}, _From, State) ->
-  {ok, Query} = make_select_query(Table,Options),
-  Result = emysql:execute(?MODULE,Query),
+  Query = list_to_binary("SELECT * FROM " ++ Table ++ add_options(Options)),
+  emysql:prepare(list_to_atom("find_" ++Table),Query),
+  Values = get_values(Options),
+  Result = emysql:execute(?MODULE,list_to_atom("find_" ++Table),Values),
   {reply, Result, State};
 handle_call({delete,Table,Options}, _From, State) ->
-  {ok, Query} = make_delete_query(Table,Options),
-  {ok_packet, _, Rows, _,_,_,_} = emysql:execute(?MODULE,Query),
-  {reply, Rows, State};
+  Query = list_to_binary("DELETE FROM " ++ Table ++ add_options(Options)),
+  lager:info("Query ~p",[Query]),
+  emysql:prepare(list_to_atom("delete_" ++Table),Query),
+  Values = get_values(Options),
+  lager:info("Values ~p",[Values]),
+  Reply = case emysql:execute(?MODULE,list_to_atom("delete_" ++Table),Values) of
+    {ok_packet,_,Rows,_,_,_,_}          -> Rows;
+    {error_packet, _, _, _, Msg} -> {error, Msg}
+  end,
+  {reply, Reply, State};
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
@@ -99,24 +108,6 @@ code_change(_OldVsn, State, _Extra) ->
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
-
--spec make_select_query(string(),[{atom(),term()}]) -> {ok,binary()} | {error,term()}.
-make_select_query(Table,Options) ->
-  try
-    {ok,
-     list_to_binary("SELECT * FROM " ++ Table ++ add_options(Options) )}
-  catch
-    _:Err -> {error,Err}
-  end.
-
-make_delete_query(Table, Options) ->
-  try
-    {ok,
-     list_to_binary("DELETE FROM " ++ Table ++ add_options(Options) )}
-  catch
-    _:Err -> {error,Err}
-  end.
-
 -spec add_options([{atom(),term()}]) -> {ok,string()} | {error,term()}.
 add_options([]) ->
   "";
@@ -133,13 +124,27 @@ add_option({where,Filters}) ->
                 %% If Filter's not the last, add " AND" to the end
                 %% If Filter's a tuple with 3 elements, add " BETWEEN "
                 case {lists:last(Filters), Filter} of
-                  {Filter,{Key,Value}} ->
-                    Acc ++ atom_to_list(Key) ++ " = '" ++ Value ++ "'";
+                  {Filter,{Key,_}} ->
+                    Acc ++ atom_to_list(Key) ++ " = ? ";
                   {Filter,{Key,From,To}} ->
                     Acc ++ atom_to_list(Key) ++ " BETWEEN '" ++ From ++ "' AND '" ++ To ++ "'";
-                  {_,{Key,Value}} ->
-                    Acc ++ atom_to_list(Key) ++ " = '" ++ Value ++ "' AND ";
+                  {_,{Key,_}} ->
+                    Acc ++ atom_to_list(Key) ++ " = ? AND ";
                   {_,{Key,From,To}} ->
                     Acc ++ atom_to_list(Key) ++ " BETWEEN '" ++ From ++ "' AND '" ++ To ++ "' AND "
                 end
               end, "", Filters).
+
+
+-spec get_values([{atom(),term()}]) -> {ok,string()} | {error,term()}.
+get_values([]) ->
+  [];
+get_values([Option|Rest]) ->
+  get_value(Option) ++
+  get_values(Rest).
+
+-spec get_value({where,[{atom, string()}]}) -> string().
+get_value({where,[]}) ->
+  [];
+get_value({where,Filters}) ->
+  lists:map(fun({_,Value})-> Value end,Filters).

@@ -8,10 +8,11 @@
 
 -spec find(pos_integer()) -> notfound | #subscription{}.
 find(Id) ->
-  Result = ping_db:find(?SUBSCRIPTION_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Id]))}]}]),
+  Result = ping_db:find(?SUBSCRIPTION_TABLE,[{where,[{id,integer_to_list(Id)}]}]),
   [Subscription|[]] = emysql_util:as_record( Result, subscription, record_info(fields, subscription)),
   Subscription.
 
+-spec create(string(),pos_integer(),pos_integer(),pos_integer(),boolean()) -> {ok,pos_integer()}.
 create(Type, UserId, PingerId, DownTime, NotifyWhenUp) ->
   ping_db:create(?SUBSCRIPTION_TABLE, [
       {type, Type},
@@ -20,5 +21,6 @@ create(Type, UserId, PingerId, DownTime, NotifyWhenUp) ->
       {down_time, DownTime},
       {notify_when_up, NotifyWhenUp}]).
 
+-spec delete(pos_integer()) -> pos_integer().
 delete(Id) ->
-  ping_db:delete(?SUBSCRIPTION_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Id]))}]}]).
+  ping_db:delete(?SUBSCRIPTION_TABLE,[{where,[{id,integer_to_list(Id)}]}]).

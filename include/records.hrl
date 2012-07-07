@@ -4,6 +4,8 @@
                  user_id :: pos_integer(),
                  end_point :: string(),
                  frequency :: pos_integer(),
+                 last_status :: up | down, 
+                 last_check :: pos_integer(),
                  data = [] :: list(), % local data to extend pinger basic info
                  created_at :: term()
                 }).
@@ -13,7 +15,7 @@
                        pinger_id      :: pos_integer(),
                        down_time      :: pos_integer(),
                        notify_when_up :: boolean(),
-                       created_at}).
+                       created_at :: term()}).
 -record(event,{ type      :: pinger_down | pinger_up,
                 pinger    :: #pinger{},
                 down_time :: pos_integer()}).
@@ -25,4 +27,4 @@
                password :: binary(),
                twitter :: binary(),
                tagline :: binary(),
-               created_at}).
+               created_at :: term()}).
