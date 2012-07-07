@@ -14,9 +14,12 @@ init({tcp, http}, Req, File) ->
 
 handle(Req, undefined = State) ->
   {Path, Req2} = cowboy_http_req:path(Req),
-  send(Req2, Path, State);
+  {ok, Req3} = ping_session:create_or_update_cowboy_session_request(Req2),
+  send(Req3, Path, State);
+
 handle(Req, File = State) ->
-  send(Req, File, State).
+  {ok, Req2} = ping_session:create_or_update_cowboy_session_request(Req),
+  send(Req2, File, State).
 
 terminate(Req, State) ->
   ok.
