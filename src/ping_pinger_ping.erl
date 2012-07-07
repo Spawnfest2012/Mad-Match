@@ -4,6 +4,7 @@
 -export([handle_ping/1]).
 -include("records.hrl").
 
+-spec handle_ping(#pinger{}) -> up | down.
 handle_ping(Pinger) ->
   lager:info("ping_pinger_ping: Pinging"),
   Host = Pinger#pinger.end_point,

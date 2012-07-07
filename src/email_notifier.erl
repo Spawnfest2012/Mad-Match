@@ -15,6 +15,7 @@
 
 -record(state, {}).
 
+-spec init([]) -> {ok,#state{}}.
 init([]) ->
   {ok, #state{}}.
 
@@ -33,22 +34,27 @@ handle_event(Event, State) ->
   lager:info("email notifier, unknown event: ~p",[Event]),
   {ok, State}.
 
+-spec handle_call(term(),#state{}) -> {ok,ok,#state{}}.
 handle_call(_Request, State) ->
   Reply = ok,
   {ok, Reply, State}.
 
+-spec handle_info(term(),#state{}) -> {ok,#state{}}.
 handle_info(_Info, State) ->
   {ok, State}.
 
+-spec terminate(term(),#state{}) -> ok.
 terminate(_Reason, _State) ->
   ok.
 
+-spec code_change(term(),#state{},term()) -> {ok,#state{}}.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
+-spec send(string(),[tuple()]) -> ok.
 send(Email,[{subject,Subject},{body,Body}]) ->
   lager:debug("sending email: ~p ~p",[Email,Subject]),
   mailer:send({ping_utils:get_env(email_host), ping_utils:get_env(email_port)},

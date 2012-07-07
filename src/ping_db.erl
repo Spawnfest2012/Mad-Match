@@ -109,6 +109,7 @@ make_select_query(Table,Options) ->
     _:Err -> {error,Err}
   end.
 
+-spec make_delete_query(string(),[{atom(),term()}]) -> {ok,binary()} | {error,term()}.
 make_delete_query(Table, Options) ->
   try
     {ok,
