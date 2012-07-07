@@ -7,5 +7,6 @@
   <script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
   </head>
   <body>
+    {% include "header.dtl" %}
   </body>
 </html>

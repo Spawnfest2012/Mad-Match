@@ -19,7 +19,7 @@ start_link() ->
 %% ====================================================================
 init([]) ->
     Children = [
-              {ping_session,{ping_session,start_link,[]},permanent, ?TIMEOUT, worker,[ping_session]}
+              {ping_session,{ping_session_manager,start_link,[]},permanent, ?TIMEOUT, worker,[ping_session_manager]}
 						 ],
 		lager:info("Initializing Ping Session Supervisor...~n", []),
     {ok,{{one_for_one,5,10}, Children}}.
