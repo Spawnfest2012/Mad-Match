@@ -20,7 +20,7 @@ create(Name,Type,UserId,EndPoint,Frequency) ->
 all(Options) -> 
 Result = ping_db:find(?PINGER_TABLE,Options),
   emysql_util:as_record(
-		Result, user, record_info(fields, user)).
+		Result, user, record_info(fields, pinger)).
 
 -spec find_users_emails(pos_integer(),pinger_down,pos_integer()) -> [string()].
 find_users_emails(PingerId,pinger_down,DownTime) ->
