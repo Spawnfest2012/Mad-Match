@@ -16,7 +16,11 @@
 
 body {
   min-width: 1200px;
+  font-family: "helvetica neue",arial,sans-serif;
+  font-size: 10px;
+  color: #211922;
 }
+
 
 /* Containers
 ----------------------------------------------------------------------------------------------------*/
@@ -217,5 +221,59 @@ body {
 
 .clearfix {
   zoom: 1;
+}
+
+
+/* pingterest styles follow */
+
+#signup input {
+  width: 435px;
+  display: block;
+  padding: 10px 14px 5px;
+  font-size: 32px;
+  font-weight: 300;
+  background: transparent;
+  border: 1px solid #a4a2a2;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  -moz-box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  -webkit-box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  -webkit-transition: all 0.08s ease-in-out;
+  -moz-transition: all 0.08s ease-in-out;
+}
+
+#signup h1 { 
+  text-align:center;
+  font-weight:300;
+  font-size: 32px;
+}
+
+#signup #signup_header img { 
+  text-align:center;
+  display:block;
+  margin:auto;
+
+}
+
+
+#signup input { 
+
+  margin:auto;
+  display: inline-block; 
+}
+
+#signup a.button {
+
+  display: inline-block; 
+  padding: 0.625em 1em; text-align: center;
+  font-size: 24px;
+  line-height: 1em;
+  color: #fcf9f9;
+  text-shadow: 0 -1px rgba(34,25,25,0.5);
+  background-color: #f3f3f3;
+  border: 1px solid #e7e7e7;
+  text-decoration:none;
 }
 

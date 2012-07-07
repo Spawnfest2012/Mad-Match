@@ -1,12 +1,3 @@
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
-  <script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
-  </head>
-  <body>
-    {% include "header.dtl" %}
-  </body>
-</html>
+{% include "head.dtl" %}
+{% include "header.dtl" %}
+{% include "footer.dtl" %}

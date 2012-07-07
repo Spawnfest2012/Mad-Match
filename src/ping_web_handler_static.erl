@@ -5,7 +5,7 @@
 %% API Functions
 %%
 
--define(BASE_PATH, "ui/public").
+-define(BASE_PATH, "public").
 
 init({tcp, http}, Req, []) ->
   {ok, Req, undefined};
@@ -30,11 +30,12 @@ send(Req, PathBins, State) ->
   Path = [?BASE_PATH] ++ [ binary_to_list(P) || P <- PathBins ],
   io:format("Path: ~p\n", [Path]),
   Headers = [{<<"Content-Type">>, <<"text/html">>}],
-  case {file(filename:join(Path)), catch binary_to_existing_atom(Kontroller,utf8)} of
+  case {file(filename:join(Path)), catch binary_to_existing_atom(<<Kontroller/binary,"_dtl">>,utf8)} of
     {{ok, Body},_} ->
       {ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
       {ok, Req2, State};
     {{error,enoent},Controller} when is_atom(Controller) -> 
+      lager:warning("~p ~n",[Controller]),
       case catch code:which(Controller) of
         non_existing -> 
           {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
