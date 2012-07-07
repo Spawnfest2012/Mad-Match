@@ -60,8 +60,8 @@ init([]) ->
 
 -spec handle_call(term(),{pid(),term()},#state{}) -> {reply,term(),#state{}}.
 handle_call({create,Table,Fields}, _From, State) ->
-  Parameters =  string:join(lists:map(fun({Key,Value})-> atom_to_list(Key) ++ " = ?" end,Fields),", "),
-  Values =lists:map(fun({Key,Value})-> Value end,Fields),
+  Parameters =  string:join(lists:map(fun({Key,_})-> atom_to_list(Key) ++ " = ?" end,Fields),", "),
+  Values =lists:map(fun({_,Value})-> Value end,Fields),
   emysql:prepare(list_to_atom("create_" ++Table), list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " ")),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
     {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
