@@ -13,7 +13,7 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--export([find/2,create/2]).
+-export([find/2,create/2, delete/2]).
 
 -record(state, {}).
 
@@ -42,6 +42,10 @@ find(Table,Options) ->
 create(Table,Fields) -> 
   gen_server:call(?MODULE, {create,Table,Fields}).
 
+-spec delete(binary(),[{atom,term()}]) -> list().
+delete(Table, Options) ->
+  gen_server:call(?MODULE, {delete, Table, Options}).
+
 %% ====================================================================
 %% Server functions
 %% ====================================================================
@@ -68,9 +72,14 @@ handle_call({find,Table,Options}, _From, State) ->
   {ok, Query} = make_select_query(Table,Options),
   Result = emysql:execute(?MODULE,Query),
   {reply, Result, State};
+handle_call({delete,Table,Options}, _From, State) ->
+  {ok, Query} = make_delete_query(Table,Options),
+  {ok_packet, _, Rows, _,_,_,_} = emysql:execute(?MODULE,Query),
+  {reply, Rows, State};
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
+
 
 
 -spec handle_cast(term(),#state{}) -> {noreply, #state{}}.
@@ -98,6 +107,14 @@ make_select_query(Table,Options) ->
   try
     {ok,
      list_to_binary("SELECT * FROM " ++ Table ++ add_options(Options) )}
+  catch
+    _:Err -> {error,Err}
+  end.
+
+make_delete_query(Table, Options) ->
+  try
+    {ok,
+     list_to_binary("DELETE FROM " ++ Table ++ add_options(Options) )}
   catch
     _:Err -> {error,Err}
   end.

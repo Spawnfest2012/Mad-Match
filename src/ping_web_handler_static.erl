@@ -14,9 +14,12 @@ init({tcp, http}, Req, File) ->
 
 handle(Req, undefined = State) ->
   {Path, Req2} = cowboy_http_req:path(Req),
-  send(Req2, Path, State);
+  {{ok, Req3}, Session} = ping_session:create_or_update_cowboy_session_request(Req2),
+  send(Req3, Path, State, Session);
+
 handle(Req, File = State) ->
-  send(Req, File, State).
+  {{ok, Req2}, Session} = ping_session:create_or_update_cowboy_session_request(Req),
+  send(Req2, File, State, Session).
 
 terminate(Req, State) ->
   ok.
@@ -25,12 +28,12 @@ terminate(Req, State) ->
 %% Local functions
 %%
 
-send(Req, PathBins, State) ->
+send(Req, PathBins, State, Session) ->
   [Kontroller|_] = PathBins,
   Path = [?BASE_PATH] ++ [ binary_to_list(P) || P <- PathBins ],
   io:format("Path: ~p\n", [Path]),
   Headers = [{<<"Content-Type">>, <<"text/html">>}],
-  case {file(filename:join(Path)), catch binary_to_existing_atom(<<Kontroller/binary,"_dtl">>,utf8)} of
+  case {file(filename:join(Path)), catch binary_to_existing_atom(<<"ping_",Kontroller/binary,"_controller">>,utf8)} of
     {{ok, Body},_} ->
       {ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
       {ok, Req2, State};
@@ -44,7 +47,8 @@ send(Req, PathBins, State) ->
           {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
           {ok, Req2, State};
         _ -> 
-          {ok,RenderedBody} = Controller:render([]),
+          lager:warning("about to render ~p, session is: ~p ~n",[Controller, Session]),
+          {ok,RenderedBody} = Controller:render(Req,Session),
           {ok, Req2} = cowboy_http_req:reply(200, Headers, RenderedBody, Req),
           {ok, Req2, State}
       end;

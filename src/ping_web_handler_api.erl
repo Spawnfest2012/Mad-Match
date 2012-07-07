@@ -10,7 +10,8 @@
 init({tcp, http}, Req, Opts) ->
   {ok, Req, Opts}.
 
-handle(Req, State) ->
+handle(R, State) ->
+  {{ok, Req}, _Session} = ping_session:create_or_update_cowboy_session_request(R),
   {Method, _}            = cowboy_http_req:method(Req),
   {[_|[Object|Args]], _} = cowboy_http_req:path(Req),
 
@@ -25,6 +26,7 @@ handle(Req, State) ->
     <<"firehose">>     -> handle_firehose(Method, Args, Req);
     _                  -> handle_unknown(Method, Args, Req)
   end,
+  lager:info("Response> Status: ~p, Response: ~p\n", [Status, Response]),
   {ok, Req2} = cowboy_http_req:reply(Status, [{<<"Content-Type">>, <<"application/json">>}], Response, Req),
   {ok, Req2, State}.
 
@@ -68,10 +70,27 @@ handle_pinger('DELETE', _Args, _Req) ->
 handle_pinger(_, _, _) ->
   ?NOT_FOUND.
 
-handle_subscription('PUT', _Args, _Req) ->
-  [200, <<"<body>Subscription Created</body>">>];
-handle_subscription('DELETE', _Args, _Req) ->
-  [200, <<"<body>Subscription Deleted</body>">>];
+handle_subscription('PUT', _Args, Req) ->
+  {Qs, _} = cowboy_http_req:body_qs(Req),
+  [T, U, P, D, N] = get_parameters(Qs, [<<"type">>, <<"user_id">>, <<"pinger_id">>, <<"down_time">>, <<"notify_when_up">>]),
+  case ping_subscription_db:create(T, U, P, D, N) of
+    {ok, Id} ->
+      Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
+      [201, Response];
+    {error, Error} ->
+      lager:warning("ERROR: ~p\n", [Error]),
+      Response = "{status: error}, {response: {msg:" ++ Error ++ "}}",
+      [400, Response]
+  end;
+handle_subscription('DELETE', Args, _Req) ->
+  Id = lists:nth(1, Args),
+  Rows = ping_subscription_db:delete( binary_to_list(Id) ),
+  case Rows of
+    0 -> Response = "{status: notfound}",
+      [204, Response];
+    _ -> Response = "{status: ok}",
+      [200, Response]
+  end;
 handle_subscription(_, _, _) ->
   ?NOT_FOUND.
 

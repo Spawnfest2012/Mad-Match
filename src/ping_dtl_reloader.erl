@@ -1,7 +1,7 @@
 %%% -------------------------------------------------------------------
 %%% Author  : CB DePue III
 %%% -------------------------------------------------------------------
--module(ping_session_manager).
+-module(ping_dtl_reloader).
 -behaviour(gen_server).
 
 %% --------------------------------------------------------------------
@@ -12,6 +12,10 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -record(state, {}).
+
+-define(REFRESH, 1000).
+-define(TEMPLATE_DIR, "templates").
+-define(HELPER_DIR, "helpers").
 
 %% ====================================================================
 %% External functions
@@ -29,38 +33,23 @@ stop(Pid) when is_pid(Pid) ->
 %% ====================================================================
 -spec init([]) -> {ok,#state{}}.
 init([]) ->
-  process_flag(trap_exit, true),
-  lager:info("Initializing Session Manager...", []),
-  {ok,Pid} = ping_session:start_link(),
-  TablePid = ets:new(sessions,[ordered_set, protected, {keypos,2}, 
-      {heir,self(),hand_back}, {write_concurrency,false}, {read_concurrency,false}]),
-  ets:give_away(TablePid,Pid,init_session),
-  {ok, #state{}}.
+  lager:info("Initializing DTL Reloader", []),
+  {ok, #state{}, ?REFRESH}.
 
--spec handle_call(term(),{pid(),term()},#state{}) -> {reply,term(),#state{}}.
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
+
 
 -spec handle_cast(term(),#state{}) -> {noreply, #state{}}.
 handle_cast(_Msg, State) ->
   {noreply, State}.
 
 -spec handle_info(term(),#state{}) -> {noreply, #state{}}.
-
-handle_info({'ETS-TRANSFER',TablePid,_FromPid,hand_back}, State) ->
-  lager:debug("got a session table back from the session manager! ~p ~n ",[TablePid]),
-  {ok,Pid} = ping_session:start_link(),
-  ets:give_away(TablePid,Pid,init_session),
-  {noreply, State};
-
-handle_info({'EXIT', _TablePid, _Reason}, State) ->
-  lager:warning("session manager died!",[]),
-  {noreply, State};
-
-handle_info(Info, State) ->
-  lager:warning("got something : ~p ~n ",[Info]),
-  {noreply, State}.
+handle_info(timeout, State) ->
+  catch reload_dtls(?TEMPLATE_DIR),
+  catch reload_dtls(?HELPER_DIR),
+  {noreply, State, ?REFRESH}.
 
 -spec terminate(term(),#state{}) -> ok.
 terminate(_Reason, _State) ->
@@ -73,4 +62,9 @@ code_change(_OldVsn, State, _Extra) ->
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
+reload_dtls(Dir) -> 
+ {ok,Files} = file:list_dir(Dir),
+  lists:foreach(fun(H) ->
+        lager:debug("reloading ~p ~n",[Dir ++ "/" ++ H]),
+        erlydtl:compile(Dir ++ "/" ++ H, binary_to_atom(re:replace(H,"\\.","_",[{return,binary}]),utf8)) end, Files).
 

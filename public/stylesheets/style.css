@@ -262,18 +262,43 @@ body {
 
   margin:auto;
   display: inline-block; 
+  z-index:auto;
+  left: 500px;
+  position:relative;
+  margin: 1px 0px 5px 0px;
 }
 
 #signup a.button {
 
   display: inline-block; 
+  position:relative;
+  left:530;
   padding: 0.625em 1em; text-align: center;
   font-size: 24px;
   line-height: 1em;
-  color: #fcf9f9;
-  text-shadow: 0 -1px rgba(34,25,25,0.5);
+  color: #111;
   background-color: #f3f3f3;
   border: 1px solid #e7e7e7;
   text-decoration:none;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  
+}
+
+#signup a.button.disabled {
+  background-color: #fefefe;
+  color: #ddd;
+  font-style: italic;
+}
+
+#signup label
+{
+  position:relative;
+  z-index:2;
+  left:330px;
+  font-size: 32px;
+  font-weight: -10;
+  color: #eee;
+
 }
 

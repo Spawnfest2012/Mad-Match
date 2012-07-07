@@ -1,15 +1,53 @@
 {% include "head.dtl" %}
+<script type=text/javascript>
+jQuery(function($) {
+
+  $(this).find("a.button").click(function() {
+    if (!$('a.button').hasClass('disabled'))
+    {
+      $('a.button').addClass('disabled');
+      $.ajax({type:'PUT', url: '/api/user', data:$('#theform').serialize(), statusCode: 
+        { 
+          201: function() {
+                 window.location = '/';
+               },
+          400: function() {
+                 alert('check your email - in use');
+                 $('a.button').removeClass('disabled');
+               }
+        }
+      });
+    }
+    
+  });
+
+
+});
+</script>
 <div id="signup">
 <div id="signup_header">
-<img src="http://passets-ec.pinterest.com/images/LogoRed.png"/>
+<img src="/images/pingterest_small.png"/>
 </div>
 <h1> Sign up to Pingterest</h1>
 <div id="signup_form">
-<input type="text" id="signup_input" class="">
+<form id="theform">
+<input type="text" id="name" name="name" class="">
+<label>Name</label>
+<div id="clear"/>
+<input type="text" id="email" name="email" class="">
+<label>Email</label>
+<div id="clear"/>
+<input type="text" id="password" name="password" class="">
+<label class="lefter">Password</label>
+<div id="clear"/>
+<input type="text" id="tagline" name="tagline" class="">
+<label>Tagline</label>
+<div id="clear"/>
 
 <a href="#" class="button">
-Sign me up baby
+I'm pingterested, sign me up!
 </a>
+</form>
 </div>
 </div>
 {% include "footer.dtl" %}

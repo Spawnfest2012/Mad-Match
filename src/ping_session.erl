@@ -6,7 +6,7 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start_link/0,stop/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/2]).
+-export([start_link/0,stop/1,create_or_update_cowboy_session_request/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -17,9 +17,10 @@
                proplist=[]    :: list()
   }).
 
--define(SESSION_SIZE, 20).
+-define(SESSION_SIZE, 30).
 -define(SESSION_TIMEOUT, 1000 * 5).
 -define(NEXT_SESSION_TIMEOUT, ?SESSION_TIMEOUT + calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:now()))).
+-define(PINGTEREST_SESSION, <<"pingterest_session">>).
 
 %% ====================================================================
 %% External functions
@@ -36,6 +37,14 @@ stop(Pid) when is_pid(Pid) ->
 -spec has_session(binary()) -> boolean().
 has_session(Sid) -> 
   gen_server:call(?MODULE, {has_session,Sid}).
+
+-spec create_or_update_cowboy_session_request(any()) -> {ok, any()}.
+create_or_update_cowboy_session_request(Req) -> 
+  {OldSession,_} = cowboy_http_req:cookie(?PINGTEREST_SESSION, Req),
+  lager:warning("old session is ~p ~n",[OldSession]),
+  {Sid, Proplist} = get_session(OldSession),
+  {cowboy_http_req:set_resp_cookie(
+   ?PINGTEREST_SESSION , Sid, [{path, "/"}], Req),Proplist}.
   
 -spec create_session() -> {term(), tuple()}.
 create_session() -> 
@@ -78,7 +87,7 @@ handle_call({save_session, Sid, Proplist}, _From, State = #state{tablepid=Tid}) 
 
 handle_call({get_session, Sid}, _From, State = #state{tablepid=Tid}) ->
   Reply = case ets:lookup(Tid,Sid) of
-    [] -> false;
+    [] -> new_session(Tid,none);
 
     [#sid{sid=Sid,proplist=Proplist}] -> {Sid,Proplist}
   end,
@@ -120,7 +129,7 @@ get_session_id() ->
 new_session(Tid,Uid) -> 
   Sid = get_session_id(),
   Then = ?NEXT_SESSION_TIMEOUT,
-  Proplist = [{uid,Uid}],
+  Proplist = [{uid,Uid},{sid,Sid}],
   ets:insert(Tid,#sid{sid=Sid,time=Then,proplist=Proplist}),
   {Sid,Proplist}.
 

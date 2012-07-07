@@ -35,3 +35,6 @@ shell: all
 
 run: all
 	${ERL} -boot start_sasl -s pingterest; \
+
+runquick: quick
+	${ERL} -boot start_sasl -s pingterest; \
