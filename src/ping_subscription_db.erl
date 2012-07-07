@@ -1,7 +1,8 @@
--module(subscription_db).
+-module(ping_subscription_db).
 
 -include("records.hrl").
 -include("defaults.hrl").
+-include_lib("deps/emysql/include/emysql.hrl").
 
 -export([find/1]).
 
