@@ -2,6 +2,8 @@
 -export([init/3, handle/2, terminate/2]).
 
 -define(NOT_FOUND, [404, <<"<body> 404, not found </body>">>]).
+-define(UNAUTHORIZED, [401, <<"<body> 401, not going to happen</body>">>]).
+-define(OK, [200, <<"ok">>]).
 
 %%
 %% API Functions
@@ -11,7 +13,7 @@ init({tcp, http}, Req, Opts) ->
   {ok, Req, Opts}.
 
 handle(R, State) ->
-  {{ok, Req}, _Session} = ping_session:create_or_update_cowboy_session_request(R),
+  {{ok, Req}, Session} = ping_session:create_or_update_cowboy_session_request(R),
   {Method, _}            = cowboy_http_req:method(Req),
   {[_|[Object|Args]], _} = cowboy_http_req:path(Req),
 
@@ -19,7 +21,7 @@ handle(R, State) ->
   
   [Status, Response] = case Object of
     <<"user">>         -> handle_user(Method, Args, Req);
-    <<"login">>        -> handle_login(Method, Args, Req);
+    <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(Method, Args, Req);
     <<"subscription">> -> handle_subscription(Method, Args, Req);
     <<"alert">>        -> handle_alert(Method, Args, Req);
@@ -58,8 +60,14 @@ handle_user('PUT', _Args, Req) ->
 handle_user(_, _, _) ->
   ?NOT_FOUND.
 
-handle_login('POST', _Args, _Req) ->
-  [200, <<"ok">>];
+handle_login('POST', _Args, _Req, Session) ->
+  case true of %% ping_db:do_something_with_args
+    true -> 
+      %% please set the uid in the session
+      ?OK;
+    false -> 
+      ?UNAUTHORIZED
+  end;
 handle_login(_, _, _) ->
   ?NOT_FOUND.
 
