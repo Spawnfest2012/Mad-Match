@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1,create/5,all/1,get_subscriptions/4]).
+-export([find/1,create/5,all/1,find_users_emails/3,find_users_emails/2]).
 
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
@@ -20,13 +20,17 @@ create(Name,Type,UserId,EndPoint,Frequency) ->
 all(Options) -> 
 Result = ping_db:find(?PINGER_TABLE,Options),
   emysql_util:as_record(
-		Result, user, record_info(fields, user)).
+		Result, pinger, record_info(fields, pinger)).
 
-get_subscriptions(Type,PingerId,pinger_down,DownTime) ->
-  Query = "SELECT u."++atom_to_list(Type)++" FROM users u,subscriptions s WHERE u.id = s.user_id AND s.type = '"++atom_to_list(Type)++"' AND s.pinger_id = "++integer_to_list(PingerId)++" AND s.down_time <= "++integer_to_list(DownTime),
-  R = ping_db:execute(list_to_binary(Query)),
-  lists:flatten(R#result_packet.rows);
-get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
-  Query = "SELECT u."++atom_to_list(Type)++" FROM users u,subscriptions s WHERE u.id = s.user_id AND s.type = '"++atom_to_list(Type)++"' AND s.pinger_id = "++integer_to_list(PingerId)++ " AND s.notify_when_up = true",
+-spec find_users_emails(pos_integer(),pinger_down,pos_integer()) -> [string()].
+find_users_emails(PingerId,pinger_down,DownTime) ->
+  Query = "SELECT u.email FROM users u,subscriptions s ON u.id = s.user_id WHERE s.type = 'email' AND s.pinger_id = "++integer_to_list(PingerId)++" AND s.downtime <= "++integer_to_list(DownTime),
   R = ping_db:execute(list_to_binary(Query)),
   lists:flatten(R#result_packet.rows).
+
+-spec find_users_emails(pos_integer(),pinger_up) -> [string()].
+find_users_emails(PingerId,pinger_up) ->
+  Query = "SELECT u.email FROM users u,subscriptions s ON u.id = s.user_id WHERE s.type = 'email' AND s.pinger_id = "++integer_to_list(PingerId)++ " AND s.notify_when_up = true",
+  R = ping_db:execute(list_to_binary(Query)),
+  lists:flatten(R#result_packet.rows).
+  

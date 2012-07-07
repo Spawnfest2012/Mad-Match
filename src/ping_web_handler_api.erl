@@ -6,6 +6,8 @@
 -define(OK, [200, <<"ok">>]).
 -define(CREATED, [201, <<"ok">>]).
 
+-include("records.hrl").
+
 %%
 %% API Functions
 %%
@@ -21,7 +23,7 @@ handle(R, State) ->
   lager:info("Method: ~p || Object: ~p || Args: ~p\n", [Method, Object, Args]),
   
   [Status, Response] = case Object of
-    <<"user">>         -> handle_user(Method, Args, Req);
+    <<"user">>         -> handle_user(Method, Args, Req, Session);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(Method, Args, Req);
@@ -47,30 +49,33 @@ get_parameters(Qs, Params) ->
 get_parameter(Key, Qs) ->
   proplists:get_value(Key, Qs).
 
-handle_user('PUT', _Args, Req) ->
+handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
   [N, E, P, T] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>]),
+  lager:warning("creating a guy: ~p ~p ~p ~p ~n", [N, E, P, T]),
   case ping_user_db:create(N, E, P, T) of
-    {ok, Id} ->
-      Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
+    {ok, Uid} ->
+      ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
+      Response = "{status: ok}, {response: {id:" ++ integer_to_list(Uid) ++ "}",
       [201, Response];
     {error, Error} ->
       lager:warning("ERROR: ~p\n", [Error]),
       Response = "{status: error}, {response: {msg:" ++ Error ++ "}",
       [400, Response]
   end;
-handle_user(_, _, _) ->
+handle_user(_, _, _, _) ->
   ?NOT_FOUND.
 
-handle_login('POST', _Args, _Req, Session) ->
-  case true of %% ping_db:do_something_with_args
-    true -> 
-      %% please set the uid in the session
-      Uid = 1234,
-      ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
-      ?CREATED;
-    false -> 
-      ?UNAUTHORIZED
+handle_login('POST', _Args, Req, Session) ->
+  {Qs, _} = cowboy_http_req:body_qs(Req),
+  [Email, Pass] = get_parameters(Qs, [<<"email">>, <<"password">>]),
+  case ping_user_db:find(Email, Pass) of
+    [] -> 
+      ?UNAUTHORIZED;
+    [User] ->
+      lager:info("Storing session with user id: ~p\n", [User#user.id]),
+      ping_session:save_session(lists:keystore(uid,1,Session,{uid,User#user.id})),
+      ?CREATED
   end;
 handle_login(_, _, _, _) ->
   ?NOT_FOUND.
