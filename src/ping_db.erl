@@ -30,9 +30,7 @@ stop(Pid) when is_pid(Pid) ->
 
 -spec execute(binary()) -> term().
 execute(Query) ->
-  R = emysql:execute(?MODULE, Query),
-  R#result_packet.rows.
-
+  emysql:execute(?MODULE, Query).
 
 -spec find(binary(),[{atom,term()}]) -> list().
 find(Table,Options) -> 
