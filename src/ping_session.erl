@@ -43,8 +43,14 @@ create_or_update_cowboy_session_request(Req) ->
   {OldSession,_} = cowboy_http_req:cookie(?PINGTEREST_SESSION, Req),
   lager:warning("old session is ~p ~n",[OldSession]),
   {Sid, Proplist} = get_session(OldSession),
+
+  %% special case - insert an 'is_logged_in' property because many controllers need this
+  Proplist2 = case proplists:get_value(uid,Proplist) of
+    Id when is_integer(Id) -> lists:keystore(is_logged_in,1,Proplist,{is_logged_in,true});
+    _ -> Proplist
+  end,
   {cowboy_http_req:set_resp_cookie(
-   ?PINGTEREST_SESSION , Sid, [{path, "/"}], Req),Proplist}.
+   ?PINGTEREST_SESSION , Sid, [{path, "/"}], Req),Proplist2}.
   
 -spec create_session() -> {term(), tuple()}.
 create_session() -> 

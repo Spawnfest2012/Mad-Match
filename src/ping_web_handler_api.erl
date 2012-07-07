@@ -4,6 +4,7 @@
 -define(NOT_FOUND, [404, <<"<body> 404, not found </body>">>]).
 -define(UNAUTHORIZED, [401, <<"<body> 401, not going to happen</body>">>]).
 -define(OK, [200, <<"ok">>]).
+-define(CREATED, [201, <<"ok">>]).
 
 %%
 %% API Functions
@@ -67,7 +68,7 @@ handle_login('POST', _Args, _Req, Session) ->
       %% please set the uid in the session
       Uid = 1234,
       ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
-      ?OK;
+      ?CREATED;
     false -> 
       ?UNAUTHORIZED
   end;

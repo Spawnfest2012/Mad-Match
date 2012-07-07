@@ -25,8 +25,11 @@ jQuery(function($) {
 </center>
   <ul>
       <li><a href="#">Add</a></li>
-      <li><a href="/login" id="logout">Login</a></li>
+      {% if is_logged_in %}
       <li><a href="#" id="logout">Logout</a></li>
+      {% else %}
+      <li><a href="/login">Login</a></li>
+      {% endif %}
   </ul>
 </div>
 </div>
