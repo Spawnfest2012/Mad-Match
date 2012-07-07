@@ -32,8 +32,8 @@ init([]) ->
   process_flag(trap_exit, true),
   lager:info("Initializing Session Manager, which seems unnecessary unless you understand ets heirs...", []),
   {ok,Pid} = ping_session:start_link(),
-  TablePid = ets:new(sessions,[ordered_set, protected, {keypos,1}, 
-      {heir,self(),handoff}, {write_concurrency,false}, {read_concurrency,false}]),
+  TablePid = ets:new(sessions,[ordered_set, protected, {keypos,2}, 
+      {heir,self(),hand_back}, {write_concurrency,false}, {read_concurrency,false}]),
   ets:give_away(TablePid,Pid,init_session),
   {ok, #state{}}.
 
@@ -47,6 +47,17 @@ handle_cast(_Msg, State) ->
   {noreply, State}.
 
 -spec handle_info(term(),#state{}) -> {noreply, #state{}}.
+
+handle_info({'ETS-TRANSFER',TablePid,_FromPid,hand_back}, State) ->
+  lager:debug("got a session table back from the session manager! ~p ~n ",[TablePid]),
+  {ok,Pid} = ping_session:start_link(),
+  ets:give_away(TablePid,Pid,init_session),
+  {noreply, State};
+
+handle_info({'EXIT', _TablePid, _Reason}, State) ->
+  lager:warning("session manager died!",[]),
+  {noreply, State};
+
 handle_info(Info, State) ->
   lager:warning("got something : ~p ~n ",[Info]),
   {noreply, State}.

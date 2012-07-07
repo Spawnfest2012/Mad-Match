@@ -36,7 +36,7 @@ uuid_utc() ->
   Nowsecs = calendar:datetime_to_gregorian_seconds(Nowish),
   Then = calendar:datetime_to_gregorian_seconds({{1970, 1, 1}, {0, 0, 0}}),
   Prefix = io_lib:format("~14.16.0b", [(Nowsecs - Then) * 1000000 + Micro]),
-  list_to_binary(Prefix ++ integer_to_list(Micro) ++ mochihex:to_hex(crypto:rand_bytes(9))).
+  list_to_binary(Prefix ++ integer_to_list(Micro) ++ ping_hex:to_hex(crypto:rand_bytes(9))).
 
 -spec binary_to_integer(binary()) -> integer().
 binary_to_integer(B) -> 
