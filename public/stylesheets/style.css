@@ -271,6 +271,8 @@ body {
 #signup a.button {
 
   display: inline-block; 
+  position:relative;
+  left:530;
   padding: 0.625em 1em; text-align: center;
   font-size: 24px;
   line-height: 1em;
@@ -281,6 +283,12 @@ body {
   -moz-border-radius: 5px;
   border-radius: 5px;
   
+}
+
+#signup a.button.disabled {
+  background-color: #fefefe;
+  color: #ddd;
+  font-style: italic;
 }
 
 #signup label

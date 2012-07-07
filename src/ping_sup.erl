@@ -23,7 +23,8 @@ init([]) ->
 							{web,{ping_web,start_link,[ping_utils:get_env(web_host),ping_utils:get_env(web_port)]},permanent, brutal_kill, worker,[ping_web]},
 				      {ping_pinger_sup, {ping_pinger_sup, start_link,[]}, permanent, brutal_kill, supervisor, [ping_pinger_sup]},
 				      {session_sup, {ping_session_sup, start_link,[]}, permanent, brutal_kill, supervisor, [ping_session_sup]},
-              {notifier,{ping_notifier,start_link,[]},permanent, brutal_kill, worker,[ping_notifier]}
+              {notifier,{ping_notifier,start_link,[]},permanent, brutal_kill, worker,[ping_notifier]},
+              {ping_dtl_reloader,{ping_dtl_reloader,start_link,[]},permanent, brutal_kill, worker,[ping_dtl_reloader]}
 						 ],
 		lager:info("Initializing Ping Supervisor...~n", []),
     {ok,{{one_for_all,5,10}, Childs}}.

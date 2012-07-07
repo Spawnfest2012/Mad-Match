@@ -1,9 +1,11 @@
 <div class="container_5">
 <div id="header">
-<img src="http://passets-ec.pinterest.com/images/LogoRed.png"/>
-<ul>
-    <li><a href="#">Add2</a></li>
-</ul>
+<center>
+  <img src="/images/pingterest_small.png"/>
+</center>
+  <ul>
+      <li><a href="#">Add2</a></li>
+  </ul>
 </div>
 </div>
 <div class="clear"/>
