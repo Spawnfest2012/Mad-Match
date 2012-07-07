@@ -14,10 +14,11 @@ start_link(_Host,Port) ->
   Dispatch = [
     %% {Host, list({Path, Handler, Opts})}
     {'_', [
-          {[],                    ping_web_handler_static, [<<"ui/public">>,<<"index.html">>]},
-          {[<<"index.html">>],    ping_web_handler_static, [<<"ui/public">>,<<"index.html">>]},
-          {[<<"static">>, '...'], ping_web_handler_static, []},
-          {['_'],                 ping_web_handler_catchall, []}
+
+          {[<<"api">>, '...'],    ping_web_handler_api, []},
+
+          {[],                    ping_web_handler_static, [<<"index.html">>]},
+          {['_', '...'],          ping_web_handler_static, []}
       ]
     }
   ],

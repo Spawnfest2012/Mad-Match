@@ -5,16 +5,18 @@
 %% API Functions
 %%
 
-init({tcp, http}, Req, []) ->
-  {ok, Req, undefined_state};
-init({tcp, http}, Req, OnlyFile) ->
-  {ok, Req, OnlyFile}.
+-define(BASE_PATH, "ui/public").
 
-handle(Req, undefined_state = State) ->
-  {[_|Path], Req2} = cowboy_http_req:path(Req),
+init({tcp, http}, Req, []) ->
+  {ok, Req, undefined};
+init({tcp, http}, Req, File) ->
+  {ok, Req, File}.
+
+handle(Req, undefined = State) ->
+  {Path, Req2} = cowboy_http_req:path(Req),
   send(Req2, Path, State);
-handle(Req, OnlyFile = State) ->
-  send(Req, OnlyFile, State).
+handle(Req, File = State) ->
+  send(Req, File, State).
 
 terminate(Req, State) ->
   ok.
@@ -24,7 +26,7 @@ terminate(Req, State) ->
 %%
 
 send(Req, PathBins, State) ->
-  Path = [ binary_to_list(P) || P <- PathBins ],
+  Path = [?BASE_PATH] ++ [ binary_to_list(P) || P <- PathBins ],
   io:format("Path: ~p\n", [Path]),
   case file(filename:join(Path)) of
     {ok, Body} ->
