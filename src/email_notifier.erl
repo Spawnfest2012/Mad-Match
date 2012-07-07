@@ -19,12 +19,11 @@ init([]) ->
   {ok, #state{}}.
 
 -spec handle_event(#event{} | term(),#state{}) -> {ok,#state{}}. 
-handle_event({#event{ type = EventType, pinger_id = EventPingerId, down_time = EventDownTime }}, State) ->
-  Pinger = ping_pinger_db:find(EventPingerId),
-  Emails = ping_pinger_db:get_emails(EventPingerId,EventType,EventDownTime),
-  case EventType of
+handle_event({#event{ type = Type, pinger = Pinger, down_time = DownTime }}, State) ->
+  Emails = ping_pinger_db:get_emails(Pinger#pinger.id,Type,DownTime),
+  case Type of
     pinger_down ->
-      lists:foreach(fun(Email) -> send(Email,?PINGER_DOWN_EMAIL(Pinger#pinger.name,EventDownTime)) end, Emails);
+      lists:foreach(fun(Email) -> send(Email,?PINGER_DOWN_EMAIL(Pinger#pinger.name,DownTime)) end, Emails);
     pinger_up ->
       lists:foreach(fun(Email) -> send(Email,?PINGER_UP_EMAIL(Pinger#pinger.name)) end, Emails)
   end,

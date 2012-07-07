@@ -12,7 +12,7 @@
                        down_time      :: pos_integer(),
                        notify_when_up :: boolean()}).
 -record(event,{ type      :: pinger_down | pinger_up,
-                pinger_id :: pos_integer(),
+                pinger    :: #pinger{},
                 down_time :: pos_integer()}).
 
 
