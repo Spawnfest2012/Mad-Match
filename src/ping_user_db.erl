@@ -6,7 +6,7 @@
 -include_lib("deps/emysql/include/emysql.hrl").
 
 
--export([find/1,find/2,create/4]).
+-export([find/1,find/2,create/4,all/1]).
 
 -spec find(integer()) -> [#user{}].
 find(Id) ->
@@ -29,6 +29,10 @@ find(Id, Password) ->
 
 -spec create(string(),string(),string(),string()) -> {ok,pos_integer()}.
 create(Name,Email,Password,Tagline) -> 
-  CryptoPass = erlsha2:sha512(list_to_binary(Password)),
-  HexPass = hmac:hexlify(CryptoPass),
-  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,HexPass},{tagline,Tagline}]).
+  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,Password},{tagline,Tagline}]).
+
+-spec all(list()) -> [#user{}].
+all(Options) -> 
+Result = ping_db:find(?USER_TABLE,Options),
+  emysql_util:as_record(
+		Result, user, record_info(fields, user)).

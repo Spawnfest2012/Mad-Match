@@ -4,6 +4,7 @@
 -define(NOT_FOUND, [404, <<"<body> 404, not found </body>">>]).
 -define(UNAUTHORIZED, [401, <<"<body> 401, not going to happen</body>">>]).
 -define(OK, [200, <<"ok">>]).
+-define(CREATED, [201, <<"ok">>]).
 
 %%
 %% API Functions
@@ -22,6 +23,7 @@ handle(R, State) ->
   [Status, Response] = case Object of
     <<"user">>         -> handle_user(Method, Args, Req);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
+    <<"logout">>       -> handle_logout(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(Method, Args, Req);
     <<"subscription">> -> handle_subscription(Method, Args, Req);
     <<"alert">>        -> handle_alert(Method, Args, Req);
@@ -64,12 +66,21 @@ handle_login('POST', _Args, _Req, Session) ->
   case true of %% ping_db:do_something_with_args
     true -> 
       %% please set the uid in the session
-      ?OK;
+      Uid = 1234,
+      ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
+      ?CREATED;
     false -> 
       ?UNAUTHORIZED
   end;
 handle_login(_, _, _, _) ->
   ?NOT_FOUND.
+
+handle_logout('POST', _Args, _Req, Session) ->
+  ping_session:delete_session(Session),
+  ?OK;
+handle_logout(_, _, _, _) ->
+  ?NOT_FOUND.
+
 
 handle_pinger('PUT', _Args, _Req) ->
   [200, <<"<body>Pinger Created</body>">>];

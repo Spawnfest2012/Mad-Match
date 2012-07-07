@@ -4,7 +4,7 @@
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          uuid_utc/0, now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
-         now_to_gregorian_seconds/1, random_string/1]).
+         now_to_gregorian_seconds/1, random_string/1,seed/0]).
 
 -export([pad_to16/1]).
 -export([first/3]).
@@ -202,3 +202,21 @@ random_string(Len) ->
   ChrsSize = size(Chrs),
   F = fun(_, R) -> [element(random:uniform(ChrsSize), Chrs) | R] end,
   lists:foldl(F, "", lists:seq(1, Len)).
+
+
+-spec seed() -> ok.
+seed() ->
+  
+  {ok,Migration} = file:read_file("src/migration.sql"),
+  lager:info("Migration ~p",[Migration]),
+  
+
+  emysql:execute(ping_db,Migration),
+
+
+  {ok,Uid} = ping_user_db:create("Master Pinger","alerts@pingtere.sh","nopingforyou",""),
+
+  Apps = [{"Prod1","ping",Uid,"prod1.whisper.sh",60000},{"Prod3","ping",Uid,"prod3.whisper.sh",60000},{"Prod4","ping",Uid,"prod4.whisper.sh",60000},{"Prod5","ping",Uid,"prod5.whisper.sh",60000}],
+  lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency) end, Apps),
+  ok.
+
