@@ -12,3 +12,4 @@ gproc_*
 *.swo
 *.swn
 *.log
+*.orig
