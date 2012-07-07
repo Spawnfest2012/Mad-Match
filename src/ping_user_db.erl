@@ -1,8 +1,9 @@
 %% Author: Manuel Gomez
--module(user_db).
+-module(ping_user_db).
 
 -include("records.hrl").
 -include("defaults.hrl").
+-include_lib("deps/emysql/include/emysql.hrl").
 
 
 -export([find/1,create/4]).
@@ -16,4 +17,5 @@ find(Id) ->
 
 -spec create(string(),string(),string(),string()) -> integer.
 create(Name,Email,Password,Tagline) -> 
-  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,Password},{tagline,Tagline}]).
+  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,Password},{tagline,Tagline}]),
+  lists:flatten(Result#.

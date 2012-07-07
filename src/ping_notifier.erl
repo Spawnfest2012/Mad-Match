@@ -2,6 +2,8 @@
 
 -export([start_link/0,notify/1]).
 
+-include("records.hrl").
+
 -spec start_link() -> {ok,pid()}.
 start_link() ->
   lager:info("Initializing Notifier", []),
@@ -11,6 +13,6 @@ start_link() ->
                 end, ping_utils:get_env(notifiers)),
   Resp.
 
--spec notify(term()) -> ok.
+-spec notify(#event{}) -> ok.
 notify(Event) ->
   gen_event:notify(?MODULE, Event).
