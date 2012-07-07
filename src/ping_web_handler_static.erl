@@ -26,14 +26,28 @@ terminate(Req, State) ->
 %%
 
 send(Req, PathBins, State) ->
+  [Kontroller|_] = PathBins,
   Path = [?BASE_PATH] ++ [ binary_to_list(P) || P <- PathBins ],
   io:format("Path: ~p\n", [Path]),
-  case file(filename:join(Path)) of
-    {ok, Body} ->
-      Headers = [{<<"Content-Type">>, <<"text/html">>}],
+  Headers = [{<<"Content-Type">>, <<"text/html">>}],
+  case {file(filename:join(Path)), catch binary_to_existing_atom(Kontroller,utf8)} of
+    {{ok, Body},_} ->
       {ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
       {ok, Req2, State};
-    _ ->
+    {{error,enoent},Controller} when is_atom(Controller) -> 
+      case catch code:which(Controller) of
+        non_existing -> 
+          {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
+          {ok, Req2, State};
+        {'EXIT', _} -> 
+          {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
+          {ok, Req2, State};
+        _ -> 
+          {ok,RenderedBody} = Controller:render([]),
+          {ok, Req2} = cowboy_http_req:reply(200, Headers, RenderedBody, Req),
+          {ok, Req2, State}
+      end;
+    _ -> 
       {ok, Req2} = cowboy_http_req:reply(404, [], <<"<body>404 Not Found :(</body>">>, Req),
       {ok, Req2, State}
   end.
