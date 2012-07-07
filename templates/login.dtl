@@ -1,0 +1,51 @@
+{% include "head.dtl" %}
+<script type=text/javascript>
+jQuery(function($) {
+
+  $(this).find("a.button").click(function() {
+    if (!$('a.button').hasClass('disabled'))
+    {
+      $('a.button').addClass('disabled');
+      $.ajax({type:'POST', url: '/api/login', data:$('#theform').serialize(), statusCode: 
+        { 
+          201: function() {
+                 window.location = '/';
+               },
+          401: function() {
+                 alert('check that password!');
+                 $('a.button').removeClass('disabled');
+               },
+          404: function() {
+                 alert('check that password!');
+                 $('a.button').removeClass('disabled');
+               }
+        }
+      });
+    }
+    
+  });
+
+
+});
+</script>
+<div id="signup">
+<div id="signup_header">
+<img src="/images/pingterest_small.png"/>
+</div>
+<h1> Login to Pingterest</h1>
+<div id="signup_form">
+<form id="theform">
+<input type="text" id="email" name="email" class="">
+<label>Email</label>
+<div id="clear"/>
+<input type="text" id="password" name="password" class="">
+<label class="lefter">Password</label>
+<div id="clear"/>
+
+<a href="#" class="button">
+Log me in, Please!
+</a>
+</form>
+</div>
+</div>
+{% include "footer.dtl" %}

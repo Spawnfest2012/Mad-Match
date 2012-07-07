@@ -1,10 +1,35 @@
+<script type=text/javascript>
+jQuery(function($) {
+
+  $(this).find("a#logout").click(function() {
+    if (!$('a.button').hasClass('disabled'))
+    {
+      $.ajax({type:'POST', url: '/api/logout', statusCode: 
+        { 
+          200: function() {
+                 window.location = '/';
+               }
+        }
+      });
+    }
+    
+  });
+
+
+});
+</script>
 <div class="container_5">
 <div id="header">
 <center>
   <img src="/images/pingterest_small.png"/>
 </center>
   <ul>
-      <li><a href="#">Add2</a></li>
+      <li><a href="#">Add</a></li>
+      {% if is_logged_in %}
+      <li><a href="#" id="logout">Logout</a></li>
+      {% else %}
+      <li><a href="/login">Login</a></li>
+      {% endif %}
   </ul>
 </div>
 </div>
