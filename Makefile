@@ -3,6 +3,9 @@ ERL := erl -pa ebin -pa deps/*/ebin +Bc +K true -smp enable -s crypto -s inets  
 all:
 	rebar get-deps && rebar compile 
 
+quick:
+	rebar skip_deps=true compile
+
 clean:
 	rebar clean
 
