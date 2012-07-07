@@ -1,42 +1,31 @@
 %% @author Marcos Almonacid 
 -module(ping_utils).
 
+-compile({parse_transform, exprecs}). 
+
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
-         uuid_utc/0, now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
+         now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
          now_to_gregorian_seconds/1, random_string/1,seed/0]).
 
 -export([pad_to16/1]).
 -export([first/3]).
 -export([positive/1]).
+-export([record_to_proplist/1]). 
 
 -type datetime() :: {{pos_integer(), 1..12, 1..31}, {0..23, 0..59, 0..59}}.
 -export_type([datetime/0]).
 
-%-spec haversine_dist(#location{}, #location{}) -> float().
-%haversine_dist(#location{lat = Lat1, long = Long1},
-%               #location{lat = Lat2, long = Long2})-> 
-%  DLat = (Lat2 - Lat1) * math:pi() / 180,
-%  DLong = (Long2 - Long1) * math:pi() / 180,
-%  A = math:sin(DLat/2) * math:sin(DLat/2) +
-%        math:cos(Lat1 * math:pi() / 180) *
-%        math:cos(Lat2 * math:pi() / 180) *
-%        math:sin(DLong/2) * math:sin(DLong/2), 
-%  C = 2 * math:atan2(math:sqrt(A), math:sqrt(1-A)), 
-%  ?EARTHRADIUS * C.  % result is in mi
-%
-%-spec half_earth() -> non_neg_integer().
-%half_earth() ->
-%  erlang:trunc(?EARTHRADIUS * math:pi()) + 1.
-%
--spec uuid_utc() -> binary().
-uuid_utc() ->
-  Now = {_, _, Micro} = erlang:now(),
-  Nowish = calendar:now_to_universal_time(Now),
-  Nowsecs = calendar:datetime_to_gregorian_seconds(Nowish),
-  Then = calendar:datetime_to_gregorian_seconds({{1970, 1, 1}, {0, 0, 0}}),
-  Prefix = io_lib:format("~14.16.0b", [(Nowsecs - Then) * 1000000 + Micro]),
-  list_to_binary(Prefix ++ integer_to_list(Micro) ++ ping_hex:to_hex(crypto:rand_bytes(9))).
+-include("include/records.hrl").
+
+record_to_proplist(#pinger{} = Rec) ->
+  lists:zip(record_info(fields, pinger), tl(tuple_to_list(Rec)));
+record_to_proplist(#subscription{} = Rec) ->
+  lists:zip(record_info(fields, subscription), tl(tuple_to_list(Rec)));
+record_to_proplist(#event{} = Rec) ->
+  lists:zip(record_info(fields, event), tl(tuple_to_list(Rec)));
+record_to_proplist(#user{} = Rec) ->
+  lists:zip(record_info(fields, user), tl(tuple_to_list(Rec))).
 
 -spec binary_to_integer(binary()) -> integer().
 binary_to_integer(B) -> 
