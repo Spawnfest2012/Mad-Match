@@ -8,15 +8,21 @@
                  created_at :: term()
                 }).
 -record(subscription,{ id             :: pos_integer(),
-                       type           :: email | tweet,
+                       type           :: email | twitter,
                        user_id        :: pos_integer(),
                        pinger_id      :: pos_integer(),
                        down_time      :: pos_integer(),
                        notify_when_up :: boolean(),
-                        created_at}).
+                       created_at}).
 -record(event,{ type      :: pinger_down | pinger_up,
-                pinger_id :: pos_integer(),
+                pinger    :: #pinger{},
                 down_time :: pos_integer()}).
 
 
--record(user, {id :: pos_integer(),name :: binary(),email :: binary(),password :: binary(),tagline :: binary(),created_at}).
+-record(user, {id :: pos_integer(),
+               name :: binary(),
+               email :: binary(),
+               password :: binary(),
+               twitter :: binary(),
+               tagline :: binary(),
+               created_at}).
