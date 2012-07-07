@@ -4,6 +4,7 @@
                  user_id :: pos_integer(),
                  end_point :: string(),
                  frequency :: pos_integer(),
+                 data = [] :: list(), % local data to extend pinger basic info
                  created_at :: term()
                 }).
 -record(subscription,{ id             :: pos_integer(),
