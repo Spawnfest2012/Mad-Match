@@ -1,10 +1,11 @@
 -module(ping_pinger).
 -behaviour(gen_fsm).
 -include("records.hrl").
--callback handle_ping(Pinger::#pinger{}) -> up|down.
+%-callback handle_ping(Pinger :: #pinger{}) -> up|down.
+
 
 -export([start_link/1]).
-
+-export([behaviour_info/1]).
 -export([init/1, up/2, down/2, stop/1, handle_event/3, terminate/3]).
 
 -record(state, {
@@ -17,6 +18,9 @@
     dns  -> ping_pinger_dns;
     http -> ping_pinger_http
   end).
+
+behaviour_info(callbacks) -> [{handle_ping, 1}];
+behaviour_info(_) -> undefined.
 
 build_process_name(Id) ->
   list_to_atom(?MODULE_STRING ++ [$-|integer_to_list(Id)]).
