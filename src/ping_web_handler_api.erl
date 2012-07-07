@@ -68,7 +68,7 @@ handle_login('POST', _Args, _Req, Session) ->
     false -> 
       ?UNAUTHORIZED
   end;
-handle_login(_, _, _) ->
+handle_login(_, _, _, _) ->
   ?NOT_FOUND.
 
 handle_pinger('PUT', _Args, _Req) ->
