@@ -47,8 +47,8 @@ handle_cast(_Msg, State) ->
 
 -spec handle_info(term(),#state{}) -> {noreply, #state{}}.
 handle_info(timeout, State) ->
-  reload_dtls(?TEMPLATE_DIR),
-  reload_dtls(?HELPER_DIR),
+  catch reload_dtls(?TEMPLATE_DIR),
+  catch reload_dtls(?HELPER_DIR),
   {noreply, State, ?REFRESH}.
 
 -spec terminate(term(),#state{}) -> ok.
