@@ -1,7 +1,7 @@
 %%% -------------------------------------------------------------------
 %%% Author  : CB DePue III
 %%% -------------------------------------------------------------------
--module(ping_session).
+-module(ping_session_manager).
 -behaviour(gen_server).
 
 %% --------------------------------------------------------------------
@@ -11,7 +11,7 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--record(state, { tablepid=undefined :: undefined | integer() }).
+-record(state, {}).
 
 %% ====================================================================
 %% External functions
@@ -29,7 +29,12 @@ stop(Pid) when is_pid(Pid) ->
 %% ====================================================================
 -spec init([]) -> {ok,#state{}}.
 init([]) ->
-  lager:info("Initializing Session State", []),
+  process_flag(trap_exit, true),
+  lager:info("Initializing Session Manager, which seems unnecessary unless you understand ets heirs...", []),
+  {ok,Pid} = ping_session:start_link(),
+  TablePid = ets:new(sessions,[ordered_set, protected, {keypos,1}, 
+      {heir,self(),handoff}, {write_concurrency,false}, {read_concurrency,false}]),
+  ets:give_away(TablePid,Pid,init_session),
   {ok, #state{}}.
 
 -spec handle_call(term(),{pid(),term()},#state{}) -> {reply,term(),#state{}}.
@@ -42,15 +47,9 @@ handle_cast(_Msg, State) ->
   {noreply, State}.
 
 -spec handle_info(term(),#state{}) -> {noreply, #state{}}.
-handle_info({'ETS-TRANSFER',TablePid,_FromPid,_PointlessReason}, State) ->
-  lager:debug("got a session table ~p ~n ",[TablePid]),
-  NewState = State#state{tablepid=TablePid},
-  {noreply, NewState};
-
 handle_info(Info, State) ->
   lager:warning("got something : ~p ~n ",[Info]),
   {noreply, State}.
-
 
 -spec terminate(term(),#state{}) -> ok.
 terminate(_Reason, _State) ->
@@ -63,3 +62,4 @@ code_change(_OldVsn, State, _Extra) ->
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
+
