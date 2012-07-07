@@ -4,8 +4,7 @@
                  user_id :: pos_integer(),
                  end_point :: string(),
                  frequency :: pos_integer(),
-                 created_at :: term(),
-                 module :: ping_pinger_ping | ping_pinger_http | ping_pinger_dns
+                 created_at :: term()
                 }).
 -record(subscription,{ id             :: pos_integer(),
                        type           :: email | tweet,

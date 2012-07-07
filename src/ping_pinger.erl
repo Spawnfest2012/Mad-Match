@@ -1,7 +1,7 @@
 -module(ping_pinger).
 -behaviour(gen_fsm).
 -include("records.hrl").
--callback handle_ping(Pinger::#pinger{}, State::term()) -> up|down.
+-callback handle_ping(Pinger::#pinger{}) -> up|down.
 
 -export([start_link/1]).
 
@@ -12,6 +12,12 @@
     down_since :: term()
     }).
 
+-define(GET_MODULE(S), case S#state.pinger#pinger.type of
+    ping -> ping_pinger_ping;
+    dns  -> ping_pinger_dns;
+    http -> ping_pinger_http
+  end).
+
 build_process_name(Id) ->
   list_to_atom(?MODULE_STRING ++ [$-|integer_to_list(Id)]).
 
@@ -19,11 +25,12 @@ start_link(Pinger) ->
   gen_fsm:start_link({local, build_process_name(Pinger#pinger.id)}, ?MODULE, Pinger, []).
 
 init(Pinger) ->
+  lager:info("Init"),
   {ok, up, #state{pinger = Pinger}, Pinger#pinger.frequency}.
 
 up(timeout, State) ->
   lager:info("UP"),
-  NextState = ((State#state.pinger)#pinger.module):handle_ping(State#state.pinger),
+  NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     down ->
       {next_state, NextState,
@@ -35,7 +42,7 @@ up(timeout, State) ->
 
 down(timeout, State) ->
   lager:info("Down"),
-  NextState = ((State#state.pinger)#pinger.module):handle_ping(State#state.pinger),
+  NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     up ->
       {next_state, NextState,
