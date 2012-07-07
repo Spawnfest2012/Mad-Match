@@ -108,6 +108,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
+
 -spec add_options([{atom(),term()}]) -> {ok,string()} | {error,term()}.
 add_options([]) ->
   "";

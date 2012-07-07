@@ -28,7 +28,7 @@ find(Pk, Password) ->
 
 -spec create(string(),string(),string(),string()) -> {ok,pos_integer()}.
 create(Name,Email,Password,Tagline) ->
-  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password, ?CRYPT(Password)},{tagline,Tagline}]).
+  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password, Password},{tagline,Tagline}]).
 
 -spec delete(pos_integer()) -> pos_integer().
 delete(Id) ->

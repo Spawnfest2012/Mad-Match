@@ -6,6 +6,9 @@ all:
 quick:
 	rebar skip_deps=true compile
 
+setuid:
+	cd deps/procket && make setuid
+
 clean:
 	rebar clean
 
