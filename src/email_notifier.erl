@@ -6,7 +6,7 @@
 -include("records.hrl").
 
 -define(PINGER_DOWN_EMAIL(Name,DownTime),[{subject,"Server Down: "++Name},
-                                          {body,"The server "++Name++" fell "++integer_to_list(DownTime)++" minutes ago."}]).
+                                          {body,"The server "++Name++" has been down for "++integer_to_list(DownTime)++" minutes."}]).
 -define(PINGER_UP_EMAIL(Name),[{subject,"Server is back: "++Name},
                                {body,"The server "++Name++" is up again :D."}]).
 
@@ -19,30 +19,31 @@ init([]) ->
   {ok, #state{}}.
 
 -spec handle_event(#event{} | term(),#state{}) -> {ok,#state{}}. 
-handle_event({#event{ type = EventType, pinger_id = EventPingerId, down_time = EventDownTime }}, State) ->
-  Pinger = ping_pinger_db:find(EventPingerId),
-  Emails = ping_pinger_db:get_emails(EventPingerId,EventType,EventDownTime),
-  case EventType of
+handle_event(#event{ type = Type, pinger = Pinger, down_time = DownTime }, State) ->
+  Emails = ping_pinger_db:get_subscriptions(email,Pinger#pinger.id,Type,DownTime),
+  case Type of
     pinger_down ->
-      lists:foreach(fun(Email) -> send(Email,?PINGER_DOWN_EMAIL(Pinger#pinger.name,EventDownTime)) end, Emails);
+      DownTimeMins = trunc((DownTime/1000)/60),
+      lists:foreach(fun(Email) -> send(Email,?PINGER_DOWN_EMAIL(Pinger#pinger.name,DownTimeMins)) end, Emails);
     pinger_up ->
       lists:foreach(fun(Email) -> send(Email,?PINGER_UP_EMAIL(Pinger#pinger.name)) end, Emails)
   end,
   {ok, State};
 handle_event(Event, State) ->
+  lager:info("email notifier, unknown event: ~p",[Event]),
   {ok, State}.
 
-handle_call(Request, State) ->
+handle_call(_Request, State) ->
   Reply = ok,
   {ok, Reply, State}.
 
-handle_info(Info, State) ->
+handle_info(_Info, State) ->
   {ok, State}.
 
-terminate(Reason, State) ->
+terminate(_Reason, _State) ->
   ok.
 
-code_change(OldVsn, State, Extra) ->
+code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
 %% --------------------------------------------------------------------
