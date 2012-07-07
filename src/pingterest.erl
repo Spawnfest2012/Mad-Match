@@ -31,6 +31,14 @@ start(_Type, _StartArgs) ->
 stop(_State) ->
     ok.
 
+-spec user(integer()) -> list().
+user(Id) -> 
+  ping_db:user(Id).
+
+-spec create_user(binary(),binary(),binary()) -> list().
+create_user(Login, Email, Password) -> 
+  ping_db:create_user(Login, Email, Password).
+
 %% ====================================================================
 %% Internal functions
 %% ====================================================================
