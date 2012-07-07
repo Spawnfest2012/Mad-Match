@@ -1,7 +1,7 @@
 ERL := erl -pa ebin -pa deps/*/ebin +Bc +K true -smp enable -s crypto -s inets  -s ssl -s lager -s emysql  -s ibrowse  ${ERL_ARGS}
 
 all:
-	rebar get-deps && rebar compile 
+	rebar get-deps compile 
 
 quick:
 	rebar skip_deps=true compile
