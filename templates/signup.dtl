@@ -1,11 +1,22 @@
 {% include "head.dtl" %}
 <div id="signup">
 <div id="signup_header">
-<img src="http://passets-ec.pinterest.com/images/LogoRed.png"/>
+<img src="/images/pingterest_small.png"/>
 </div>
 <h1> Sign up to Pingterest</h1>
 <div id="signup_form">
-<input type="text" id="signup_input" class="">
+<input type="text" id="name" class="">
+<label>Name</label>
+<div id="clear"/>
+<input type="text" id="email" class="">
+<label>Email</label>
+<div id="clear"/>
+<input type="text" id="password" class="">
+<label class="lefter">Password</label>
+<div id="clear"/>
+<input type="text" id="tagline" class="">
+<label>Tagline</label>
+<div id="clear"/>
 
 <a href="#" class="button">
 Sign me up baby

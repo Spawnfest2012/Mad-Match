@@ -30,7 +30,7 @@ stop(Pid) when is_pid(Pid) ->
 -spec init([]) -> {ok,#state{}}.
 init([]) ->
   process_flag(trap_exit, true),
-  lager:info("Initializing Session Manager, which seems unnecessary unless you understand ets heirs...", []),
+  lager:info("Initializing Session Manager...", []),
   {ok,Pid} = ping_session:start_link(),
   TablePid = ets:new(sessions,[ordered_set, protected, {keypos,2}, 
       {heir,self(),hand_back}, {write_concurrency,false}, {read_concurrency,false}]),
