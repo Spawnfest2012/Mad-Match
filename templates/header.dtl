@@ -1,3 +1,23 @@
+<script type=text/javascript>
+jQuery(function($) {
+
+  $(this).find("a#logout").click(function() {
+    if (!$('a.button').hasClass('disabled'))
+    {
+      $.ajax({type:'POST', url: '/api/logout', statusCode: 
+        { 
+          200: function() {
+                 window.location = '/';
+               }
+        }
+      });
+    }
+    
+  });
+
+
+});
+</script>
 <div class="container_5">
 <div id="header">
 <center>
@@ -5,6 +25,8 @@
 </center>
   <ul>
       <li><a href="#">Add</a></li>
+      <li><a href="/login" id="logout">Login</a></li>
+      <li><a href="#" id="logout">Logout</a></li>
   </ul>
 </div>
 </div>

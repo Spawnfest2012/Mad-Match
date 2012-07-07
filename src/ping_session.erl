@@ -6,7 +6,7 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start_link/0,stop/1,create_or_update_cowboy_session_request/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/2]).
+-export([start_link/0,stop/1,create_or_update_cowboy_session_request/1,delete_session/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/1, save_session/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -54,6 +54,18 @@ create_session() ->
 create_session(Uid) -> 
   gen_server:call(?MODULE, {create_session,Uid}).
 
+-spec delete_session(list() | none) -> ok.
+delete_session(Proplist) -> 
+  Sid = proplists:get_value(sid,Proplist),
+  gen_server:call(?MODULE, {delete_session,Sid}).
+
+-spec save_session(list()) -> {term(), tuple()}.
+save_session(Proplist) -> 
+  Sid = proplists:get_value(sid,Proplist),
+  lager:warning("sid is ~p ~n",[Sid]),
+  save_session(Sid,Proplist).
+
+-spec save_session(binary(),list()) -> {term(), tuple()}.
 save_session(Sid,Proplist) -> 
   gen_server:call(?MODULE, {save_session,Sid,Proplist}).
 
@@ -78,10 +90,19 @@ handle_call({create_session, Uid}, _From, State = #state{tablepid=Tid}) ->
   Reply = new_session(Tid,Uid),
   {reply, Reply, State};
 
+handle_call({delete_session, Sid}, _From, State = #state{tablepid=Tid}) ->
+  ets:delete(Tid,Sid),
+  {reply, ok, State};
+
 handle_call({save_session, Sid, Proplist}, _From, State = #state{tablepid=Tid}) ->
+  lager:warning("ets lookup is  ~p ~n",[ets:lookup(Tid,Sid)]),
   Reply = case ets:lookup(Tid,Sid) of
     [] -> false;
-    [#sid{sid=Sid,proplist=Proplist}] -> {Sid,Proplist}
+    [Record=#sid{sid=Sid}] -> 
+      Then = ?NEXT_SESSION_TIMEOUT,
+      NewRecord = Record#sid{time=Then,proplist=Proplist},
+      ets:insert(Tid,NewRecord), 
+      {Sid,NewRecord}
   end,
   {reply, Reply, State};
 
