@@ -8,19 +8,19 @@
 
 -export([find/1,find/2,create/4,all/1]).
 
--define(CRYPT(P), hmac:hexlify( erlsha2:sha512(list_to_binary(P)) )).
+-define(CRYPT(P), hmac:hexlify( erlsha2:sha512(P) )).
 
 -spec find(integer()) -> [#user{}].
 find(Id) ->
   find(Id, undefined).
 
-find(Id, Password) ->
+find(Pk, Password) ->
   Result = case Password of
     undefined ->
-      ping_db:find(?USER_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Id]))}]}]);
+      ping_db:find(?USER_TABLE,[{where,[{id,lists:flatten(io_lib:format("~p",[Pk]))}]}]);
     _ ->
       ping_db:find(?USER_TABLE,[{where,[
-              {id,lists:flatten(io_lib:format("~p",[Id]))},
+              {email, binary_to_list(Pk)},
               {password, ?CRYPT(Password)}
               ]}])
   end,
