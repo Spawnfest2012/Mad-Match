@@ -1,6 +1,6 @@
 -record(pinger,{ id :: pos_integer(),
                  name :: string(),
-                 type :: atom() ,
+                 type :: ping|dns|http,
                  user_id :: pos_integer(),
                  end_point :: string(),
                  frequency :: pos_integer(),
