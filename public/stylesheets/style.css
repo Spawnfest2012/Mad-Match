@@ -219,3 +219,28 @@ body {
   zoom: 1;
 }
 
+
+/* pingterest styles follow */
+
+#signup input {
+  width: 435px;
+  display: block;
+  padding: 10px 14px 5px;
+  font-size: 32px;
+  font-weight: 300;
+  background: transparent;
+  border: 1px solid #a4a2a2;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  -moz-box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  -webkit-box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  box-shadow: inset 0 1px rgba(34,25,25,0.15), 0 1px rgba(255,255,255,0.8);
+  -webkit-transition: all 0.08s ease-in-out;
+  -moz-transition: all 0.08s ease-in-out;
+}
+
+#signup h1 { 
+  text-align:center;
+  font-weight:500;
+}

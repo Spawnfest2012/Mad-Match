@@ -1,0 +1,5 @@
+{% include "head.dtl" %}
+<div id="signup">
+<h1> Sign up to Pingterest</h1>
+</div>
+{% include "footer.dtl" %}
