@@ -1,8 +1,6 @@
 %% @author Marcos Almonacid 
 -module(ping_utils).
 
--compile({parse_transform, exprecs}). 
-
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
