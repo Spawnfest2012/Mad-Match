@@ -17,5 +17,4 @@ find(Id) ->
 
 -spec create(string(),string(),string(),string()) -> integer.
 create(Name,Email,Password,Tagline) -> 
-  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,Password},{tagline,Tagline}]),
-  lists:flatten(Result#.
+  Result = ping_db:create(?USER_TABLE,[{name,Name},{email,Email},{password,Password},{tagline,Tagline}]).

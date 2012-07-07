@@ -57,9 +57,9 @@ handle_call({create,Table,Fields}, _From, State) ->
   Values =lists:map(fun({Key,Value})-> Value end,Fields),
   emysql:prepare(list_to_atom("create_" ++Table), list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " ")),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
-            {ok_packet,_,_,Id,_,_,_} -> {ok,Id};
-            Error -> {error,Error}
-          end,
+    {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
+    {error_packet, _, _, Status, Msg} -> {error, Msg}
+  end,
   {reply, Reply, State};
 handle_call({find,Table,Options}, _From, State) ->
   {ok, Query} = make_select_query(Table,Options),
