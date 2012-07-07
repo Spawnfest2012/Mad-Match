@@ -9,7 +9,6 @@ admin/nbproject/
 admin/config/*.yml
 erl_crash.dump
 *.beam
-config/erlang/*.config
 gproc_*
 *.swp
 *.swo
