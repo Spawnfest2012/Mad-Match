@@ -15,7 +15,11 @@ set :deploy_via,          :copy
 ssh_options[:forward_agent] = true
 ssh_options[:port] = 22
 
-$requested = Capistrano::CLI.ui.ask("THIS IS PINGTEREST PRODUCTION. Enter build number to deploy:")
+if ENV['BUILD_NUMBER']
+  $requested = ENV['BUILD_NUMBER']
+else
+  $requested = Capistrano::CLI.ui.ask("THIS IS PINGTEREST PRODUCTION. Enter build number to deploy:")
+end
 exit unless $requested.to_i > 30
 
 role :prod, "pingterest.inakalabs.com"
