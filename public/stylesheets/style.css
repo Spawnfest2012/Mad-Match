@@ -226,6 +226,46 @@ body {
 
 /* pingterest styles follow */
 
+/* header stuff */
+
+div#logo
+{
+  display:block;
+  margin:auto;
+  margin-left: auto;
+  margin-right: auto;
+  width: 6em
+  
+}
+div#header
+{
+display: block;
+font-family: 'helvetica neue', arial, sans-serif;
+font-size: 10px;
+
+}
+#header a
+{
+background-color: #CB2027;
+color: white;
+display: inline-block;
+font-family: 'helvetica neue', arial, sans-serif;
+font-size: 13px;
+font-weight: bold;
+height: 29px;
+padding-bottom: 0px;
+padding-left: 14px;
+padding-right: 27px;
+padding-top: 15px;
+position: relative;
+text-align: -webkit-auto;
+text-decoration: none;
+text-shadow: rgba(34, 25, 25, 0.296875) 0px -1px 0px;
+width: 25px;
+
+}
+
+/* signup/login stuff */
 #signup input {
   width: 435px;
   display: block;
@@ -328,3 +368,60 @@ body {
 
 }
 
+
+/* pingers  */
+div.pinger
+{
+  border: 1px solid #999;
+  padding: 15px 15px 0;
+}
+
+div.pinger a.button_action
+{
+  position:absolute;
+}
+
+img.pinger
+{
+  max-width:189px;
+  min-width:189px;
+  overflow:hidden;
+}
+
+.pinger p.server_name 
+{
+margin: 10px 0 5px;
+overflow: hidden;
+
+}
+
+.pinger div.conversation
+{
+  background-color: #F2F0F0;
+  margin: 0 -15px;
+  padding: 10px 15px;
+  background-color: #F2F0F0;
+  
+}
+
+.pinger div.conversation p
+{
+  display: block;
+  max-width: 156px;
+  height: 30px;
+  vertical-align: middle;
+  font-size: 11px;
+  padding-left:40px;
+  color: #8C7E7E;
+}
+.pinger div.conversation p a
+{
+  font-weight:bold;
+}
+
+img.pingowner
+{
+  position:absolute;
+  height:30px;
+  width: 30px;
+}

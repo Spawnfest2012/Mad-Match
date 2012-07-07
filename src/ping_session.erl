@@ -6,7 +6,7 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start_link/0,stop/1,create_or_update_cowboy_session_request/1,delete_session/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/1, save_session/2]).
+-export([start_link/0,stop/1,create_or_update_cowboy_session_request/1,delete_session/1,create_session/0,create_session/1,is_logged_in/1,get_session/1,save_session/1, save_session/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -34,9 +34,10 @@ stop(Pid) when is_pid(Pid) ->
   gen_server:cast(Pid, stop).
 
 
--spec has_session(binary()) -> boolean().
-has_session(Sid) -> 
-  gen_server:call(?MODULE, {has_session,Sid}).
+-spec is_logged_in(list()) -> boolean().
+is_logged_in(Proplist) -> 
+  Sid = proplists:get_value(sid,Proplist),
+  gen_server:call(?MODULE, {is_logged_in,Sid}).
 
 -spec create_or_update_cowboy_session_request(any()) -> {ok, any()}.
 create_or_update_cowboy_session_request(Req) -> 
@@ -88,8 +89,15 @@ init([]) ->
   {ok, #state{}}.
 
 -spec handle_call(term(),{pid(),term()},#state{}) -> {reply,term(),#state{}}.
-handle_call({has_session, Sid}, _From, State = #state{tablepid=Tid}) ->
-  Reply = ets:member(Tid,Sid),
+handle_call({is_logged_in, Sid}, _From, State = #state{tablepid=Tid}) ->
+  Reply = case ets:lookup(Tid,Sid) of
+    [] -> false;
+    [#sid{sid=Sid,proplist=Proplist}] ->
+      case proplists:get_value(uid,Proplist) of
+        Id when is_integer(Id) -> true;
+        _ -> false
+      end
+  end,
   {reply, Reply, State};
 
 handle_call({create_session, Uid}, _From, State = #state{tablepid=Tid}) ->

@@ -20,8 +20,8 @@ handle(R, State) ->
   {Method, _}            = cowboy_http_req:method(Req),
   {[_|[Object|Args]], _} = cowboy_http_req:path(Req),
 
-  lager:info("Method: ~p || Object: ~p || Args: ~p\n", [Method, Object, Args]),
-  
+  LoggedIn = ping_session:is_logged_in(Session),
+  lager:info("Logged in: ~p Method: ~p || Object: ~p || Args: ~p\n", [LoggedIn, Method, Object, Args]),
   [Status, Response] = case Object of
     <<"user">>         -> handle_user(Method, Args, Req, Session);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
