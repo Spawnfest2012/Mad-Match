@@ -7,11 +7,8 @@
 
 -define(PINGER_DOWN_EMAIL(Name,DownTime),[{subject,"Server Down: "++Name},
                                           {body,"The server "++Name++" fell "++integer_to_list(DownTime)++" minutes ago."}]).
--define(PINGER_UP_EMAIL(Name,DownTime),[{subject,"Server is back: "++Name},
-                                          {body,"The server "++Name++" is up again :D."}]).
-
-
--export([]).
+-define(PINGER_UP_EMAIL(Name),[{subject,"Server is back: "++Name},
+                               {body,"The server "++Name++" is up again :D."}]).
 
 %% gen_event callbacks
 -export([init/1, handle_event/2, handle_call/2, handle_info/2, terminate/2, code_change/3]).
@@ -23,13 +20,13 @@ init([]) ->
 
 -spec handle_event(#event{} | term(),#state{}) -> {ok,#state{}}. 
 handle_event({#event{ type = EventType, pinger_id = EventPingerId, down_time = EventDownTime }}, State) ->
-  Pinger = pinger_db:find(EventPingerId),
-  Emails = user_db:get_emails(EventPingerId,EventType,EventDownTime),
+  Pinger = ping_pinger_db:find(EventPingerId),
+  Emails = ping_pinger_db:get_emails(EventPingerId,EventType,EventDownTime),
   case EventType of
     pinger_down ->
-      lists:foreach(fun(Email) -> send_email(Email,[{subject,?PINGER_DOWN_EMAIL(Pinger#pinger.name,EventDownTime)}]) end, Emails);
+      lists:foreach(fun(Email) -> send(Email,?PINGER_DOWN_EMAIL(Pinger#pinger.name,EventDownTime)) end, Emails);
     pinger_up ->
-      lists:foreach(fun(Email) -> send_email(Email,[{subject,?PINGER_UP_EMAIL(Pinger#pinger.name,EventDownTime)}]) end, Emails)
+      lists:foreach(fun(Email) -> send(Email,?PINGER_UP_EMAIL(Pinger#pinger.name)) end, Emails)
   end,
   {ok, State};
 handle_event(Event, State) ->
@@ -51,5 +48,8 @@ code_change(OldVsn, State, Extra) ->
 %% --------------------------------------------------------------------
 %%% Internal functions
 %% --------------------------------------------------------------------
-send_email(Email,[{subject,Subject},{body,Body}]) ->
-  lager:info("sending email: ~p ~p",[Email,Subject]).
+send(Email,[{subject,Subject},{body,Body}]) ->
+  lager:debug("sending email: ~p ~p",[Email,Subject]),
+  mailer:send({ping_utils:get_env(email_host), ping_utils:get_env(email_port)},
+              {ping_utils:get_env(email_name),ping_utils:get_env(email_addr),ping_utils:get_env(email_pwd)},
+              [Email], Subject, Body).

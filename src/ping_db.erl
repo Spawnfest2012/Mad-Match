@@ -4,6 +4,8 @@
 -module(ping_db).
 -behaviour(gen_server).
 
+-include_lib("deps/emysql/include/emysql.hrl").
+
 %% --------------------------------------------------------------------
 %% External exports
 -export([start_link/0,stop/1,execute/1]).
@@ -11,7 +13,7 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--export([find/2,create/2]).
+-export([find/2,create/2, delete/2]).
 
 -record(state, {}).
 
@@ -28,7 +30,8 @@ stop(Pid) when is_pid(Pid) ->
 
 -spec execute(binary()) -> term().
 execute(Query) ->
-  emysql:execute(?MODULE, Query).
+  R = emysql:execute(?MODULE, Query),
+  R#result_packet.rows.
 
 
 -spec find(binary(),[{atom,term()}]) -> list().
@@ -38,6 +41,10 @@ find(Table,Options) ->
 -spec create(binary(),[{atom,term()}]) -> list().
 create(Table,Fields) -> 
   gen_server:call(?MODULE, {create,Table,Fields}).
+
+-spec delete(binary(),[{atom,term()}]) -> list().
+delete(Table, Options) ->
+  gen_server:call(?MODULE, {delete, Table, Options}).
 
 %% ====================================================================
 %% Server functions
@@ -57,17 +64,22 @@ handle_call({create,Table,Fields}, _From, State) ->
   Values =lists:map(fun({Key,Value})-> Value end,Fields),
   emysql:prepare(list_to_atom("create_" ++Table), list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " ")),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
-            {ok_packet,_,_,Id,_,_,_} -> {ok,Id};
-            Error -> {error,Error}
-          end,
+    {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
+    {error_packet, _, _, Status, Msg} -> {error, Msg}
+  end,
   {reply, Reply, State};
 handle_call({find,Table,Options}, _From, State) ->
   {ok, Query} = make_select_query(Table,Options),
   Result = emysql:execute(?MODULE,Query),
   {reply, Result, State};
+handle_call({delete,Table,Options}, _From, State) ->
+  {ok, Query} = make_delete_query(Table,Options),
+  {ok_packet, _, Rows, _,_,_,_} = emysql:execute(?MODULE,Query),
+  {reply, Rows, State};
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
+
 
 
 -spec handle_cast(term(),#state{}) -> {noreply, #state{}}.
@@ -95,6 +107,14 @@ make_select_query(Table,Options) ->
   try
     {ok,
      list_to_binary("SELECT * FROM " ++ Table ++ add_options(Options) )}
+  catch
+    _:Err -> {error,Err}
+  end.
+
+make_delete_query(Table, Options) ->
+  try
+    {ok,
+     list_to_binary("DELETE FROM " ++ Table ++ add_options(Options) )}
   catch
     _:Err -> {error,Err}
   end.

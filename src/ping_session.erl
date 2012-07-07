@@ -6,15 +6,20 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start_link/0,stop/1,create_session/1,has_session/1,lookup_session/1]).
+-export([start_link/0,stop/1,create_session/0,create_session/1,has_session/1,get_session/1,save_session/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -record(state, { tablepid=undefined :: undefined | integer() }).
+-record(sid, { sid=undefined :: undefined | integer(),
+               time=undefined :: undefined | integer(),
+               proplist=[]    :: list()
+  }).
 
 -define(SESSION_SIZE, 20).
 -define(SESSION_TIMEOUT, 1000 * 5).
+-define(NEXT_SESSION_TIMEOUT, ?SESSION_TIMEOUT + calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:now()))).
 
 %% ====================================================================
 %% External functions
@@ -28,18 +33,24 @@ stop(Pid) when is_pid(Pid) ->
   gen_server:cast(Pid, stop).
 
 
--spec has_session(integer()) -> boolean().
-has_session(Uid) -> 
-  gen_server:call(?MODULE, {has_session,Uid}).
+-spec has_session(binary()) -> boolean().
+has_session(Sid) -> 
+  gen_server:call(?MODULE, {has_session,Sid}).
   
-%% returns already_logged_in | new_session
--spec create_session(integer()) -> {term(), binary()}.
+-spec create_session() -> {term(), tuple()}.
+create_session() -> 
+  create_session(none).
+
+-spec create_session(integer() | none) -> {term(), tuple()}.
 create_session(Uid) -> 
   gen_server:call(?MODULE, {create_session,Uid}).
 
--spec lookup_session(binary()) -> {term(), binary()}.
-lookup_session(Sid) -> 
-  gen_server:call(?MODULE, {lookup_session,Sid}).
+save_session(Sid,Proplist) -> 
+  gen_server:call(?MODULE, {save_session,Sid,Proplist}).
+
+-spec get_session(binary()) -> {term(), tuple()}.
+get_session(Sid) -> 
+  gen_server:call(?MODULE, {get_session,Sid}).
 
 %% ====================================================================
 %% Server functions
@@ -50,26 +61,28 @@ init([]) ->
   {ok, #state{}}.
 
 -spec handle_call(term(),{pid(),term()},#state{}) -> {reply,term(),#state{}}.
-handle_call({has_session, Uid}, _From, State = #state{tablepid=Tid}) ->
-  Reply = ets:member(Tid,Uid),
+handle_call({has_session, Sid}, _From, State = #state{tablepid=Tid}) ->
+  Reply = ets:member(Tid,Sid),
   {reply, Reply, State};
 
 handle_call({create_session, Uid}, _From, State = #state{tablepid=Tid}) ->
-  Reply = case ets:lookup(Tid,Uid) of
-    [] -> new_session(Tid,Uid);
+  Reply = new_session(Tid,Uid),
+  {reply, Reply, State};
 
-    [{uid,Uid,Sid}] -> Sid
+handle_call({save_session, Sid, Proplist}, _From, State = #state{tablepid=Tid}) ->
+  Reply = case ets:lookup(Tid,Sid) of
+    [] -> false;
+    [#sid{sid=Sid,proplist=Proplist}] -> {Sid,Proplist}
   end,
   {reply, Reply, State};
 
-handle_call({lookup_session, Sid}, _From, State = #state{tablepid=Tid}) ->
+handle_call({get_session, Sid}, _From, State = #state{tablepid=Tid}) ->
   Reply = case ets:lookup(Tid,Sid) of
     [] -> false;
 
-    [{sid,Sid,Uid}] -> Uid
+    [#sid{sid=Sid,proplist=Proplist}] -> {Sid,Proplist}
   end,
   {reply, Reply, State};
-
 
 handle_call(_Request, _From, State) ->
   Reply = ok,
@@ -106,8 +119,8 @@ get_session_id() ->
 
 new_session(Tid,Uid) -> 
   Sid = get_session_id(),
-  ets:insert(Tid,{sid,Sid,Uid}),
-  ets:insert(Tid,{uid,Uid,Sid}),
-  %% Gustavo add some session timeout design here?
-  Sid.
+  Then = ?NEXT_SESSION_TIMEOUT,
+  Proplist = [{uid,Uid}],
+  ets:insert(Tid,#sid{sid=Sid,time=Then,proplist=Proplist}),
+  {Sid,Proplist}.
 
