@@ -15,7 +15,7 @@ handle(Req, State) ->
   {[_|[Object|Args]], _} = cowboy_http_req:path(Req),
   Body                   = cowboy_http_req:body(Req),
 
-  io:format("Method: ~p || Object: ~p || Args: ~p\n", [Method, Object, Args]),
+  lager:info("Method: ~p || Object: ~p || Args: ~p\n", [Method, Object, Args]),
   
   [Status, Response] = case Object of
     <<"user">>         -> handle_user(Method, Args, Body);
@@ -61,5 +61,4 @@ handle_firehose('GET', Args, Req) ->
   [200, <<"<body> Here is your f*****g firehose </body>">>].
 
 handle_unknown(Object, Args, Req) ->
-  io:format("Unknown > ~p | ~p\n", [Object, Args]),
   [404, <<"404 dude">>].
