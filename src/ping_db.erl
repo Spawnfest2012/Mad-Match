@@ -4,6 +4,8 @@
 -module(ping_db).
 -behaviour(gen_server).
 
+-include_lib("deps/emysql/include/emysql.hrl").
+
 %% --------------------------------------------------------------------
 %% External exports
 -export([start_link/0,stop/1,execute/1]).
@@ -28,7 +30,8 @@ stop(Pid) when is_pid(Pid) ->
 
 -spec execute(binary()) -> term().
 execute(Query) ->
-  emysql:execute(?MODULE, Query).
+  R = emysql:execute(?MODULE, Query),
+  R#result_packet.rows.
 
 
 -spec find(binary(),[{atom,term()}]) -> list().
