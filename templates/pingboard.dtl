@@ -1,4 +1,5 @@
 {% for p in pingers %}
    {{ p }}
 {% endfor %}
+<div class="clear"/>
 

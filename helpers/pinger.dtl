@@ -1,3 +1,20 @@
-<div>
-{{ name }}
+<div class="pinger grid_1" id="{{id}}">
+  <div class="pinger_holder">
+    <div class="actions">
+      <a class="button_action" id="action_{{id}}" href="/subscribe/{{id}}/">
+        PinIt
+      </a>
+    </div>
+    {# middle of the ping  #}
+    <div class="server_image">
+      <img class="pinger" src="http://media-cache-ec3.pinterest.com/upload/284219426453094726_AM2ZwHfR_b.jpg">
+
+    </div>
+    <p class="server_name">&nbsp;{{ name }}</p>
+    <div class="conversation">
+      <img class="pingowner" src="http://media-cache-ec7.pinterest.com/avatars/thechubbydove-61.jpg"> 
+      <p> <strong>Manuel</strong> I can't ping it either</p>
+    </div>
+  </div>
 </div>
+      
