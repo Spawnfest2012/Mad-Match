@@ -13,7 +13,7 @@ UNIQUE (`email`)
 
 DROP TABLE IF EXISTS `pingers`;
 
-CREATE TABLE IF EXISTS  `pingers` (
+CREATE TABLE `pingers` (
  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
  `name` VARCHAR( 50 ) NOT NULL ,
  `type` VARCHAR( 50 ) NOT NULL ,
@@ -27,7 +27,7 @@ CREATE TABLE IF EXISTS  `pingers` (
 
 DROP TABLE IF EXISTS `subscriptions`;
 
-CREATE TABLE IF EXISTS  `subscriptions` (
+CREATE TABLE `subscriptions` (
  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
  `type` VARCHAR( 50 ) NOT NULL ,
  `user_id` INT NOT NULL ,
