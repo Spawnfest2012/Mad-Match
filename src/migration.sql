@@ -22,7 +22,8 @@ CREATE TABLE  `pingers` (
  `frequency` INT NOT NULL ,
  `last_status` VARCHAR( 50 ) NULL ,
  `last_check` INT NOT NULL DEFAULT 0,
- `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+ `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ `data` TEXT
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;
 
 DROP TABLE `subscriptions`;

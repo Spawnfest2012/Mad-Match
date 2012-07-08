@@ -26,7 +26,7 @@ handle(R, State) ->
     <<"user">>         -> handle_user(Method, Args, Req, Session);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
-    <<"pinger">>       -> handle_pinger(Method, Args, Req);
+    <<"pinger">>       -> handle_pinger(Method, Args, Req, Session);
     <<"subscription">> -> handle_subscription(Method, Args, Req);
     <<"alert">>        -> handle_alert(Method, Args, Req);
     <<"firehose">>     -> handle_firehose(Method, Args, Req);
@@ -47,7 +47,11 @@ get_parameters(Qs, Params) ->
   lists:map(fun(P) -> get_parameter(P, Qs) end, Params).
 
 get_parameter(Key, Qs) ->
-  proplists:get_value(Key, Qs).
+  Value = proplists:get_value(Key, Qs),
+  to_list(Value).
+
+to_list(V) when is_binary(V) -> binary_to_list(V);
+to_list(V) -> V.
 
 handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
@@ -86,11 +90,27 @@ handle_logout('POST', _Args, _Req, Session) ->
 handle_logout(_, _, _, _) ->
   ?NOT_FOUND.
 
-handle_pinger('PUT', _Args, _Req) ->
-	[201, <<"{status: ok}">>];
-handle_pinger('DELETE', _Args, _Req) ->
+handle_pinger('PUT', _Args, Req, Session) ->
+  % TODO: Check for session auth
+
+  {Qs, _} = cowboy_http_req:body_qs(Req),
+  lager:info("Qs: ~p\n", [Qs]),
+  [Name, Type, Endpoint, Frequency] = get_parameters(Qs, [<<"name">>, <<"type">>, <<"endpoint">>, <<"frequency">>]),
+  Data = case Type of
+    "http" ->
+      [Method, Status] = get_parameters(Qs, [<<"web_method">>, <<"web_status">>]),
+      [{method, list_to_binary(Method)}, {status, list_to_binary(Status)}];
+    _ -> []
+  end,
+  lager:info("Data: ~p\n", [Data]),
+  UserId = proplists:get_value(uid, Session),
+  case ping_pinger_db:create(Name, Type, UserId, Endpoint, list_to_integer(Frequency) * 1000, Data) of
+    {ok, _}    -> [201, <<"{status: ok}">>];
+    {_, Error} -> [400, list_to_binary(Error)]
+  end;
+handle_pinger('DELETE', _Args, _Req, _Session) ->
   [200, <<"<body>Pinger Deleted</body>">>];
-handle_pinger(_, _, _) ->
+handle_pinger(_, _, _, _) ->
   ?NOT_FOUND.
 
 handle_subscription('PUT', _Args, Req) ->
