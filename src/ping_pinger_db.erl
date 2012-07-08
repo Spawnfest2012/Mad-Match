@@ -39,6 +39,7 @@ firehose(Page,PageSize) when is_binary(Page) ->
 firehose(Page,PageSize) -> 
   Page2 = case Page of
     1 -> 0;
+    2 -> PageSize;
     Val -> Val*PageSize
   end,
 
