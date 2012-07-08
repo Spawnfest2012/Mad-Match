@@ -40,7 +40,7 @@ We created:
 
 * A controller system that allows dynamic routing. a HTTP request enters Cowboy, and 
   the static handler determines if a file exists. If it doesn't, the handler looks for a
-  'controller' (an erlang class with the naming convention of <route>_controller. If that
+  'controller' (an erlang module with the naming convention of <route>_controller. If that
   controller exists, the render method is called.
 * A session state system that uses ETS and enables the API and web to track user sessions.
 * Custom behaviors for 'pingers' that allow us to add additional pingers later.
@@ -51,7 +51,7 @@ Design Theme
 We decided to use a (hopefully) "fair-use" parody logo which is a mix of "pingdom" and
 "pinterest". All design decisions were based off of Pinterest but we did the CSS by hand.
 
-TODO: Saturday
+TODO: Future
 ==============
 * All servers are public; we'd like to make it so that you can see servers but people can't see
   some of your servers on your public page.

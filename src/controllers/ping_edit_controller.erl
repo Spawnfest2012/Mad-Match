@@ -9,7 +9,7 @@
 
 render(Req,Session) ->
   case ping_session:is_logged_in(Session) of
-    true -> edit_dtl:render();
+    true -> edit_dtl:render(Session ++ [{button_label,"Edit My Account"}]);
     false -> ?BASE_MODULE:redirect(301, "/", Req)
   end.
 

@@ -179,7 +179,6 @@ padding: 15px 27px 0px 10px;
 position: relative;
 text-align: -webkit-auto;
 text-decoration: none;
-width: 50px;
 
 }
 
@@ -190,8 +189,6 @@ ul.menu {
 ul.menu li {
   position:relative;
   float:left;
-  width:88px;
-  border-left:1px white;
   font-size:11px;
 }
 
@@ -202,6 +199,7 @@ ul.menu li {
   font-size: 32px;
   font-weight: 300;
   background: transparent;
+  background-color:#fff;
   border: 1px solid #a4a2a2;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
@@ -241,7 +239,7 @@ div#signup h1 {
   margin:auto;
   display: inline-block; 
   z-index:auto;
-  left: 500px;
+  left: 405px;
   position:relative;
   margin: 1px 0px 5px 0px;
   width: 435px;

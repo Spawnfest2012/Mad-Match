@@ -21,7 +21,7 @@ CREATE TABLE `pingers` (
  `end_point` VARCHAR( 250 ) NOT NULL ,
  `frequency` INT NOT NULL ,
  `last_status` VARCHAR( 50 ) NULL ,
- `last_check` INT NOT NULL DEFAULT 0,
+ `last_check` BIGINT NOT NULL DEFAULT 0,
  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  `pic_url` TEXT NULL,
  `data` TEXT
