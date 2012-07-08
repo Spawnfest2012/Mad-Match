@@ -49,7 +49,7 @@
       </form>
     </div>
 
-    <div class="server_image" id="server_image_{{id}}" text="{{location}}" maped="false" image="http://whisper.sh/assets/mapicon-47339df1c4fccc0425f6b18e2511a298.png">
+    <div class="server_image" id="server_image_{{id}}" text="{{location}}" maped="false" image="/images/map_ping.png">
     <img src="/images/default_map.png">
     </div>
     <p class="server_name">&nbsp;{{ name }}</p>
