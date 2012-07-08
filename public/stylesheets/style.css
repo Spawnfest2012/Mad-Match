@@ -490,6 +490,19 @@ div#pingboard {
 }
 
 
+div#subscription
+{
+  width:180px;
+  padding-left:9px;
+  color:#000;
+position:absolute;
+display:none;
+background-color:#bbb;
+opacity:0.7;
+filter:alpha(opacity=70);
+
+}
+
 
 .masonry,
 .masonry .masonry-brick {

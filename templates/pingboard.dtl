@@ -1,8 +1,15 @@
 <script type="text/javascript">
   jQuery(function($) {
       $(".actions .button_action").click(function() {
-        $(this).parent().siblings(".subscription").show();
-        $(this).hide();
+        if ( {{is_logged_in}})
+        {
+          $(this).parent().siblings(".subscription").show();
+          $(this).hide();
+        }
+        else
+        {
+          window.location = "/login";
+        }
         return false;
       });
 
