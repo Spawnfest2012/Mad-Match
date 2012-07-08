@@ -20,7 +20,7 @@ find(Pk, Password) ->
       ping_db:find(?USER_TABLE,[{where,[{id,integer_to_list(Pk)}]}]);
     _ ->
       ping_db:find(?USER_TABLE,[{where,[
-              {email, binary_to_list(Pk)},
+              {email, (Pk)},
               {password, ?CRYPT(Password)}
               ]}])
   end,
