@@ -3,7 +3,7 @@
 -include("records.hrl").
 %-callback handle_ping(Pinger :: #pinger{}) -> up|down.
 
--define(NOTIFICATION_TIME, 6000). % 1 min
+-define(NOTIFICATION_TIME, 60000). % 1 min
 
 -export([start_link/1]).
 -export([behaviour_info/1]).
