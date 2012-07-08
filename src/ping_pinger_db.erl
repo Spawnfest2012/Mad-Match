@@ -15,7 +15,13 @@ find(Id) ->
 -spec create(string(),string(),pos_integer(),string(),pos_integer(),string(),string()) -> integer().
 create(Name,Type,UserId,EndPoint,Frequency, Data, Location) ->
   JsonData = jsx:encode(Data),
-  ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,fix_end_point(EndPoint)},{frequency,Frequency},
+  FixedEndPoint = case Type of
+    "http" -> fix_end_point(EndPoint);
+    <<"http">> -> fix_end_point(EndPoint);
+    http -> fix_end_point(EndPoint);
+    _ -> EndPoint
+  end,
+  ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,FixedEndPoint},{frequency,Frequency},
     {data,JsonData},{last_status,"down"},{location,Location}]).
 
 delete(Id) ->
