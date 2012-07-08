@@ -1,4 +1,25 @@
 <script type=text/javascript>
+    var socket = new WebSocket("ws://pingtere.st/websocket");
+    socket.onmessage = function(message) {
+        data = JSON.parse(message.data);
+        console.log(message);
+        pinger = $("#pinger_" + data.id);
+
+        image = $("#pinger_" + data.id + " .pingowner");
+        if (data.status == "up") {
+            image.attr('src', "/images/ampelmann.png");
+            color = "green";
+        } else {
+            image.attr('src', "/images/ampelmann_down.png");
+            color = "red";
+        }
+
+        pinger.css("border-color",color);
+        setTimeout(function() {
+            pinger.css("border-color","#DDDDDD");
+        }, 3000);
+    }
+
 jQuery(function($) {
 
   $(this).find("a#logout").click(function() {

@@ -1,6 +1,6 @@
 -module(ping_web_handler_ws).
 -behaviour(cowboy_http_websocket_handler).
--export([init/3, notify/2]).
+-export([init/3, notify/3]).
 -export([websocket_init/3, websocket_handle/3,
          websocket_info/3, websocket_terminate/3]).
 
@@ -11,8 +11,9 @@ init({_Any, http}, Req, []) ->
         {<<"websocket">>, _Req2} -> {upgrade, protocol, cowboy_http_websocket}
     end.
 
-notify(Id, Status) ->
-    lists:foreach(fun(Pid) -> Pid ! {notify, Id, Status} end, pg2:get_members("ws")).
+notify(Id, Status, Message) ->
+    lager:info("Notify: ~p, ~p, ~p", [Id, Status, Message]),
+    lists:foreach(fun(Pid) -> Pid ! {notify, Id, Status, Message} end, pg2:get_members("ws")).
 
 websocket_init(_Any, Req, []) ->
 %    timer:send_interval(1000, tick),
@@ -24,9 +25,9 @@ websocket_handle(_Any, Req, State) ->
     lager:info("_ANY"),
     {ok, Req, State}.
 
-websocket_info({notify, Id, Status}, Req, State) ->
+websocket_info({notify, Id, Status, Message}, Req, State) ->
     lager:info("{Notify}"),
-    Response = jsx:encode([{id, Id}, {status, Status}]),
+    Response = jsx:encode([{id, Id}, {status, Status}, {message, Message}]),
     {reply, {text, Response}, Req, State, hibernate};
 
 websocket_info(_Info, Req, State) ->
