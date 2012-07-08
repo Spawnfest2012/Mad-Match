@@ -134,7 +134,7 @@ handle_subscription('GET', Args, _Req, _Session) ->
             {type, S#subscription.type},
             {pinger_id, S#subscription.pinger_id},
             {notification_delay, S#subscription.notification_delay}]
-      end, ping_subscription_db:find_by_user(3)),
+      end, ping_subscription_db:find_by_user( ping_utils:binary_to_integer(Id) )),
   Response = [{<<"status">>, <<"ok">>}, {<<"response">>, Subscribers}],
   [200, jsx:encode(Response)];
 handle_subscription('PUT', _Args, Req, _Session) ->
