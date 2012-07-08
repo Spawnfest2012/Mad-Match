@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1,create/6,all/1,get_subscriptions/4]).
+-export([find/1,create/6,all/1,get_subscriptions/4,delete/1]).
 
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
@@ -18,6 +18,10 @@ create(Name,Type,UserId,EndPoint,Frequency, Data) ->
   lager:info(">>>>>> ~p ~p ~p ~p ~p ~p\n", [Name, Type, UserId, EndPoint, Frequency, JsonData]),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
     {data,JsonData}]).
+
+delete(Id) ->
+  lager:info("Id ~p\n", [Id]),
+  ping_db:delete(?PINGER_TABLE,[{where,[{id,Id}]}]).
 
 -spec all(list()) -> [#user{}].
 all(Options) -> 

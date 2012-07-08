@@ -23,4 +23,4 @@ create(Type, UserId, PingerId, DownTime, NotifyWhenUp) ->
 
 -spec delete(pos_integer()) -> pos_integer().
 delete(Id) ->
-  ping_db:delete(?SUBSCRIPTION_TABLE,[{where,[{id,integer_to_list(Id)}]}]).
+  ping_db:delete(?SUBSCRIPTION_TABLE,[{where,[{id,Id}]}]).

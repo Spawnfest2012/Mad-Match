@@ -108,8 +108,15 @@ handle_pinger('PUT', _Args, Req, Session) ->
     {ok, _}    -> [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
   end;
-handle_pinger('DELETE', _Args, _Req, _Session) ->
-  [200, <<"<body>Pinger Deleted</body>">>];
+handle_pinger('DELETE', Args, _Req, _Session) ->
+  Id = lists:nth(1, Args),
+  Rows = ping_pinger_db:delete( binary_to_list(Id) ),
+  case Rows of
+    0 -> Response = "{status: notfound}",
+      [204, Response];
+    _ -> Response = "{status: ok}",
+      [200, Response]
+  end;
 handle_pinger(_, _, _, _) ->
   ?NOT_FOUND.
 
