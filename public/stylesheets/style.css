@@ -179,7 +179,6 @@ padding: 15px 27px 0px 10px;
 position: relative;
 text-align: -webkit-auto;
 text-decoration: none;
-width: 50px;
 
 }
 
@@ -190,8 +189,6 @@ ul.menu {
 ul.menu li {
   position:relative;
   float:left;
-  width:88px;
-  border-left:1px white;
   font-size:11px;
 }
 
