@@ -64,7 +64,9 @@ init([]) ->
 handle_call({create,Table,Fields}, _From, State) ->
   Parameters =  string:join(lists:map(fun({Key,_})-> atom_to_list(Key) ++ " = ?" end,Fields),", "),
   Values =lists:map(fun({_,Value})-> Value end,Fields),
-  emysql:prepare(list_to_atom("create_" ++Table), list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " ")),
+  Query = list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " "),
+  lager:info("Query: ~p\nValues: ~p", [Query, Values]),
+  emysql:prepare(list_to_atom("create_" ++Table), Query),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
     {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
     {error_packet, _, _, _, Msg} -> {error, Msg}
