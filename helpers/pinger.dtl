@@ -8,8 +8,8 @@
     {# middle of the ping  #}
     <div class="subscription" id="subscription" >
       <form>
-        <input type="hidden" id="subscription_pinger_id" name="pinger_id" value="{{id}}" />
-        <input type="hidden" id="subscription_user_id" name="user_id" value="{{uid}}" />
+        <input type="hidden" name="pinger_id" value="{{id}}" />
+        <input type="hidden" name="user_id" value="{{uid}}" />
         <div>
           Notify using
           <select id="subscription_type" name="type">

@@ -1,5 +1,20 @@
 <script type="text/javascript">
   jQuery(function($) {
+      // Get your own subscriptions
+      $.ajax({
+        type:'GET',
+        url:'/api/subscription/{{uid}}',
+        statusCode: {
+          200: function(data) {
+            subscriptions = data.response;
+            for(var i = 0; i < subscriptions.length; i++) {
+              s = subscriptions[i];
+              $("#action_" + s.pinger_id).remove();
+            }
+          }
+        }
+      });
+
       $(".actions .button_action").click(function() {
         if ( {{is_logged_in}})
         {
@@ -20,6 +35,7 @@
       });
 
       $('#subscription_submit .submit').click(function() {
+        $("input[name=user_id]").val({{uid}});
         $.ajax({
           type:'PUT',
           url: '/api/subscription',
