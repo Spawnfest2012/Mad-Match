@@ -211,9 +211,13 @@ seed() ->
 
         lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,[]) end, Pingers),
 
-  Subscriptions = [{"email", Uid1, 1, 60000, 1},{"email", Uid2, 2, 60000, 1},{"email", Uid3, 3, 60000, 1},{"email", Uid4, 4, 60000, 1}],
+  Subscriptions = [
+  			{"email", Uid1, 1, 60000, 1, 30000},
+  			{"email", Uid2, 2, 60000, 1, 30000},
+  			{"email", Uid3, 3, 60000, 1, 30000},
+  			{"email", Uid4, 4, 60000, 1, 30000}],
 
-  lists:foreach(fun({Type, UserId, PingerId, DownTime, NotifyWhenUp})-> ping_subscription_db:create(Type, UserId, PingerId, DownTime, NotifyWhenUp) end, Subscriptions),
+  lists:foreach(fun({Type, UserId, PingerId, DownTime, NotifyWhenUp, Delay})-> ping_subscription_db:create(Type, UserId, PingerId, DownTime, NotifyWhenUp, Delay) end, Subscriptions),
   
 
   ok.
