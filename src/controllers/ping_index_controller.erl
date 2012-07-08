@@ -9,7 +9,7 @@
 
 render(Req,Session) ->
   %% use extends
-  Pingers = lists:map(fun(P) -> Pl = ping_utils:record_to_proplist(P), {ok,Html} = pinger_dtl:render(Pl), Html end, ping_pinger_db:all([])),
+  Pingers = lists:map(fun(P) -> Pl = ping_utils:record_to_proplist(P), {ok,Html} = pinger_dtl:render(Pl), Html end, ping_pinger_db:firehose(1,20)),
   NewSession = Session ++ [{pingers,Pingers}],
   lager:warning("~p ~n",[NewSession]),
   index_dtl:render(NewSession).
