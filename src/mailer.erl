@@ -37,15 +37,14 @@ send_message({Host, Port}, {SrcName, SrcAddr, SrcPwd}, Recipients, Subject, Body
     ok = send(Socket, "."),
     ok = send(Socket, "QUIT"),
     ssl:close(Socket),
-    io:format("Mail sent from ~s <~s> to ~p~n", [SrcName, SrcAddr, Recipients])
+    lager:info("Mail sent from ~s <~s> to ~p~n", [SrcName, SrcAddr, Recipients])
   catch
     _:Error ->
-      io:format("Could not send from ~s <~s> to ~p~n\tError: ~p~n", [SrcName, SrcAddr, Recipients, Error]),
+      lager:warning("Could not send from ~s <~s> to ~p~n\tError: ~p~n", [SrcName, SrcAddr, Recipients, Error]),
       ok
   end.
 
 send_no_recv(Socket, Data) ->
-  %io:format([$> | Data] ++ [13,10]),
   ssl:send(Socket, Data ++ [13,10]).
 
 send(Socket, Data) ->
