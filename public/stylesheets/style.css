@@ -202,6 +202,7 @@ ul.menu li {
   font-size: 32px;
   font-weight: 300;
   background: transparent;
+  background-color:#fff;
   border: 1px solid #a4a2a2;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
