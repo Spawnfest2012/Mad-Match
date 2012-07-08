@@ -48,7 +48,7 @@ namespace :deploy do
            # in the build machine environment swap out the version #
       run "cd #{current_path};sed 's/0\.0\.0/0.0.#{$requested}/' < src/pingterest.app.src > src/pingterest.app.src2; mv src/pingterest.app.src2 src/pingterest.app.src"
       run "cd #{current_path};sed \"s/0\.0\.0/0.0.#{$requested} ($HOSTNAME)/\" < src/ping_web.erl > src/ping_web.erl2; mv src/ping_web.erl2 src/ping_web.erl"
-      run "make clean && chmod +x deps/erlsha2/c_src/config.sh && make"
+      run "cd #{current_path};make clean && chmod +x deps/erlsha2/c_src/config.sh && make"
 
       run "cd #{current_path}; cp -f config/erlang/production.config config/erlang/pingterest.config"
     end
