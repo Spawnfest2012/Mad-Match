@@ -17,7 +17,7 @@
 <div id="clear"/>
 
 <a href="#" class="button">
-I'm pingterested, sign me up!
+{{ button_label }}
 </a>
 </form>
 </div>
