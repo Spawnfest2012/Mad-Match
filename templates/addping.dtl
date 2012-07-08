@@ -125,12 +125,12 @@ jQuery(function($) {
             <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
-            <input type="text" id="pic_url" name="pic_url" value="http://"  placeholder="Pic Url">
-            <label class="slightly_smaller">Pic Url</label>
+            <input type="text" id="location" name="location" value=""  placeholder="Location">
+            <label class="slightly_smaller">Location</label>
             <div id="clear"></div>
 
             <a href="#" class="button">
-                I'm Pingterested
+                Start Pinging!
             </a>
         </form>
     </div>

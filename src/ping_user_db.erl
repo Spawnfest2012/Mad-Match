@@ -44,7 +44,6 @@ delete(Id) ->
 update(Id,Name,Email,Password,Tagline,Twitter) ->
   case find(Id,Password) of
     [] -> {error, "bad_password"};
-
     [_] -> Updates = [{name,Name},{email,Email},{tagline,Tagline},{twitter,fix_twitter(Twitter)}],
            ping_db:update(?USER_TABLE, [{where,[{id,Id}]},{update,Updates}])
   end.

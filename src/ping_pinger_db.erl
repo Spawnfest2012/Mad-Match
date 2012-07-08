@@ -13,10 +13,10 @@ find(Id) ->
   Pinger.
 
 -spec create(string(),string(),pos_integer(),string(),pos_integer(),string(),string()) -> integer().
-create(Name,Type,UserId,EndPoint,Frequency, Data, PicUrl) ->
+create(Name,Type,UserId,EndPoint,Frequency, Data, Location) ->
   JsonData = jsx:encode(Data),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,fix_end_point(EndPoint)},{frequency,Frequency},
-    {data,JsonData},{last_status,"down"},{pic_url,PicUrl}]).
+    {data,JsonData},{last_status,"down"},{location,Location}]).
 
 delete(Id) ->
   ping_db:delete(?PINGER_TABLE,[{where,[{id,Id}]}]).

@@ -1,0 +1,27 @@
+{% include "head.dtl" %}
+<div id="header">
+  <div id="logo">{% include "logo.dtl" %}</div>
+
+{% include "menu.dtl" %}  
+</div>
+
+{% if not is_logged_in %}
+<div id="welcome">
+    <div class="links">
+        <a href="/signup" class="sheetsignup"> Sign Up &raquo;</a>
+    </div>
+    <p>
+      <strong>Pingterest pings your servers.</strong>
+      <br>
+      Keep track of the servers and ports you love.
+    </p>
+</div>
+{% endif %}
+<div class="container">
+  {% include "pingboard.dtl" %}
+  <nav id="page-nav">
+    <a href="/reel?page=2"></a>
+  </nav>
+</div>
+
+{% include "footer.dtl" %}
