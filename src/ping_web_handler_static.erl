@@ -32,7 +32,8 @@ send(Req, PathBins, State, Session) ->
   [Kontroller|_] = PathBins,
   Path = [?BASE_PATH] ++ [ binary_to_list(P) || P <- PathBins ],
   io:format("Path: ~p\n", [Path]),
-  Headers = [{<<"Content-Type">>, <<"text/html">>}],
+
+  Headers = [],
   case {file(filename:join(Path)), catch binary_to_existing_atom(<<"ping_",Kontroller/binary,"_controller">>,utf8)} of
     {{ok, Body},_} ->
       {ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
