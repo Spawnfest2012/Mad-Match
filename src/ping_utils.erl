@@ -1,10 +1,12 @@
 %% @author Marcos Almonacid 
 -module(ping_utils).
 
+-include("records.hrl").
+
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
-         now_to_gregorian_seconds/1, random_string/1,seed/0]).
+         random_string/1,seed/0]).
 
 -export([pad_to16/1]).
 -export([first/3]).
@@ -13,8 +15,6 @@
 
 -type datetime() :: {{pos_integer(), 1..12, 1..31}, {0..23, 0..59, 0..59}}.
 -export_type([datetime/0]).
-
--include("records.hrl").
 
 record_to_proplist(#pinger{} = Rec) ->
   lists:zip(record_info(fields, pinger), tl(tuple_to_list(Rec)));
@@ -101,15 +101,9 @@ pad_to16(Bin) ->
 
 -spec now() -> integer().
 now() ->
-  {_, _, MicroSecs} = erlang:now(),
-  Millis = erlang:trunc(MicroSecs/1000),
-  calendar:datetime_to_gregorian_seconds(
-    calendar:universal_time()) * 1000 + Millis.
-
--spec now_to_gregorian_seconds(integer()) -> integer().
-now_to_gregorian_seconds(Now) ->
-	round(Now/1000).
-	
+  {_, Secs, _} = erlang:now(),
+  Secs * 1000.
+  
 -spec dateadd(datetime(), integer()) -> datetime().
 dateadd(Date, Seconds) ->
   calendar:gregorian_seconds_to_datetime(

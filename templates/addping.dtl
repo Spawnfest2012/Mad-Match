@@ -45,8 +45,9 @@ jQuery(function($) {
     <div id="signup_form">
         <form id="theform">
 
-            <input type="text" id="name" name="name" class="">
-            <label>Name</label>
+
+            <input type="text" id="endpoint" name="endpoint" class="">
+            <label class="slightly_smaller">Server URL/IP</label>
             <div id="clear"></div>
 
             <select name="type" id="type">
@@ -57,12 +58,11 @@ jQuery(function($) {
             <div id="clear"></div>
 
             <select name="frequency" id="frequency">
-                <option value="10">10 Seconds</option>
-                <option value="20">20 Seconds</option>
-                <option value="30">30 Seconds</option>
-                <option value="40">40 Seconds</option>
-                <option value="50">50 Seconds</option>
                 <option value="60">1 minute</option>
+                <option value="120">2 minutes</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="900">15 minutes</option>
             </select>
             <div id="clear"></div>
 
@@ -80,8 +80,8 @@ jQuery(function($) {
                 <div id="clear"></div>
             </div>
 
-            <input type="text" id="endpoint" name="endpoint" class="">
-            <label class="lefter">Endpoint</label>
+            <input type="text" id="name" name="name" class="">
+            <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
             <a href="#" class="button">

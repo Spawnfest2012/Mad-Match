@@ -1,3 +1,31 @@
+<script type="text/javascript">
+  jQuery(function($) {
+      $(".actions .button_action").click(function() {
+        $(this).parent().siblings(".subscription").show();
+        $(this).hide();
+        return false;
+      });
+
+      $('#subscription_submit .cancel').click(function() {
+        $('.subscription').hide();
+        $(".actions .button_action").show();
+        return false;
+      });
+
+      $('#subscription_submit .submit').click(function() {
+        $.ajax({
+          type:'PUT',
+          url: '/api/subscription',
+          data:$(this).parent().parent().serialize(),
+          statusCode: {
+            201: function() {$('.subscription').hide()}
+          }
+        });
+        return false;
+      });
+
+  });
+</script>
 <div class="grid_5 suffix_5">
 <div id='pingboard' class="transitions-enabled infinite-scroll clearfix masonry" style="margin:50px 0 0 0;">
 {% for p in pingers %}

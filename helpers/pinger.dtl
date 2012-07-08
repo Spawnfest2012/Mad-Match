@@ -1,18 +1,64 @@
 <div class="pinger col"  id="{{id}}">
   <div class="pinger_holder">
     <div class="actions">
-      <a class="button_action" id="action_{{id}}" href="/subscribe/{{id}}/">
-        PinIt
+      <a class="button_action" id="action_{{id}}" href="#">
+        PingIt
       </a>
     </div>
     {# middle of the ping  #}
+    <div class="subscription" style="position:absolute;display:none;background-color:red">
+      <form>
+        <input type="hidden" id="subscription_pinger_id" name="pinger_id" value="{{id}}" />
+        <input type="hidden" id="subscription_user_id" name="user_id" value="{{user_id}}" />
+        <div>
+          Notify using
+          <select id="subscription_type" name="type">
+            <option value="email">Email</option>
+            <option value="twitter">Twitter</option>
+          </select>
+        </div>
+        <div>
+          When down for
+          <select id="subscription_down_time" name="down_time">
+            <option value=1>1 minute</option>
+            <option value=5>5 minutes</option>
+            <option value=10>10 minute</option>
+            <option value=30>30 minute</option>
+            <option value=60>1 hour</option>
+          </select>
+        </div>
+        <div>
+          Notify me every
+          <select id="subscription_notification_delay" name="notification_delay">
+            <option value=1>1 minute</option>
+            <option value=5>5 minutes</option>
+            <option value=10>10 minute</option>
+            <option value=30>30 minute</option>
+            <option value=60>1 hour</option>
+          </select>
+        </div>
+        <div>
+          Notifyme when up?
+          <input id="subscription_notify_when_up" name="notify_when_up" type="checkbox" />
+          <input type="hidden" id="subscription_notify_when_up_fallback" name="notify_when_up" value="0" />
+        </div>
+        <div id="subscription_submit">
+          <button class="submit">Submit</button>
+          <button class="cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+
     <div class="server_image">
       <img class="logo" src="http://media-cache-ec3.pinterest.com/upload/284219426453094726_AM2ZwHfR_b.jpg">
-
     </div>
     <p class="server_name">&nbsp;{{ name }}</p>
     <div class="conversation">
-      <img class="pingowner" src="http://media-cache-ec7.pinterest.com/avatars/thechubbydove-61.jpg"> 
+      {% if last_status == 'up' %}
+        <img class="pingowner" src="/images/ampelmann.png"> 
+      {% else %}
+        <img class="pingowner" src="/images/ampelmann_down.png"> 
+      {% endif %}
       <p> <strong>Manuel</strong> I can't ping it either</p>
     </div>
   </div>
