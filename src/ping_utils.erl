@@ -266,10 +266,10 @@ seed() ->
   
   emysql:execute(ping_db,Migration),
 
-  {ok,Uid1} = ping_user_db:create("Manuel Gomez","manuel@inaka.net","manuel","Venezuela"),
-  {ok,Uid2} = ping_user_db:create("Chad Depue","chad@inaka.net","chad","United States"),
-  {ok,Uid3} = ping_user_db:create("Gustavo Chain","gustavo@inaka.net","gustavo","Chile"),
-  {ok,Uid4} = ping_user_db:create("Marcos Almonacid","marcos@inaka.net","marcos","Argentina"),
+  {ok,Uid1} = ping_user_db:create("Manuel Gomez","manuel@inaka.net","manuel","Venezuela", "@mergoc"),
+  {ok,Uid2} = ping_user_db:create("Chad Depue","chad@inaka.net","chad","United States", "@chaddepue"),
+  {ok,Uid3} = ping_user_db:create("Gustavo Chain","gustavo@inaka.net","gustavo","Chile", "@gchaincl"),
+  {ok,Uid4} = ping_user_db:create("Marcos Almonacid","marcos@inaka.net","marcos","Argentina", "@marcosamilcar"),
 
   Pingers = [{"Prod1","ping",Uid1,"prod1.whisper.sh",120000,[]},
     {"Prod3","ping",Uid2,"prod3.whisper.sh",120000,[]},

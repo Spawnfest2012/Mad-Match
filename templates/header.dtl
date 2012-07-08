@@ -21,10 +21,8 @@ jQuery(function($) {
       $container.masonry({
         itemSelector: '.pinger',
         columnWidth : function( containerWidth ) {
-              return 20;
-        },
-        isFitWidth: true,
-        gutterwidth: 200
+              return 10;
+        }
       });
     });
     
@@ -54,12 +52,8 @@ jQuery(function($) {
 
 });
 </script>
-<div class="container_5">
 <div id="header">
-  <div class="grid_3">
-  <div id="logo"><a href='/'><img src="/images/pingterest_small.png"></a></div>
-  </div>
-  <div class="grid_2">
+  <div id="logo"><img src="/images/pingterest_small.png"></div>
   <ul class="menu">
       {% if is_logged_in %}
       <li><a href="/addping">Add</a></li>
@@ -69,12 +63,21 @@ jQuery(function($) {
       <li><a href="/signup">Signup</a></li>
       {% endif %}
   </ul>
-  </div>
 </div>
-
-{% include "pingboard.dtl" %}
-<nav id="page-nav">
-  <a href="/reel?page=2"></a>
-</nav>
+<div id="welcome">
+    <div class="links">
+        <a href="/signup" class="sheetsignup"> Sign Up &raquo;</a>
+    </div>
+    <p>
+      <strong>Pingterest pings your servers.</strong>
+      <br>
+      Keep track of the servers and ports you love.
+    </p>
+</div>
+<div class="container">
+  {% include "pingboard.dtl" %}
+  <nav id="page-nav">
+    <a href="/reel?page=2"></a>
+  </nav>
 </div>
 
