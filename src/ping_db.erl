@@ -88,7 +88,7 @@ handle_call({delete,Table,Options}, _From, State) ->
   {reply, Reply, State};
 handle_call({update,Table,Options}, _From, State) ->
   Query = list_to_binary("UPDATE " ++ Table ++ " set " ++ add_options(Options)),
-  lager:warning("query is ~p ~n",[Query]),
+  lager:debug("query is ~p ~n",[Query]),
   emysql:prepare(list_to_atom("update_" ++Table),Query),
   Values = get_values(Options),
   Result = case emysql:execute(?MODULE,list_to_atom("update_" ++Table),Values) of
