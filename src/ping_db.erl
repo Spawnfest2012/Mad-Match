@@ -80,7 +80,7 @@ handle_call({delete,Table,Options}, _From, State) ->
   Query = list_to_binary("DELETE FROM " ++ Table ++ add_options(Options)),
   lager:info("Query ~p",[Query]),
   emysql:prepare(list_to_atom("delete_" ++Table),Query),
-  Values = get_values(lists),
+  Values = get_values(Options),
   lager:info("Values ~p",[Values]),
   Reply = case emysql:execute(?MODULE,list_to_atom("delete_" ++Table),Values) of
     {ok_packet,_,Rows,_,_,_,_}          -> Rows;
