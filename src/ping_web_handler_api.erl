@@ -29,7 +29,7 @@ handle(R, State) ->
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(LoggedIn, Method, Args, Req, Session);
-    <<"subscription">> -> handle_subscription(Method, Args, Req);
+    <<"subscription">> -> handle_subscription(Method, Args, Req,Session);
     <<"alert">>        -> handle_alert(Method, Args, Req);
     _                  -> handle_unknown(Method, Args, Req)
   end,
@@ -107,7 +107,7 @@ handle_pinger(true, 'PUT', _Args, Req, Session) ->
   case ping_pinger_db:create(Name2, Type, UserId, Endpoint, FrequencyMs, Data) of
     {ok, Id} ->
       % Subscribe creator user
-      ping_subscription_db:create("email", UserId, Id, FrequencyMs, "on", FrequencyMs),
+      ping_subscription_db:create("email", UserId, Id, FrequencyMs, 1, FrequencyMs),
       ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,FrequencyMs,Data}),
       [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
@@ -126,23 +126,27 @@ handle_pinger(true, 'DELETE', Args, _Req, _Session) ->
 handle_pinger(_, _, _, _, _) ->
   ?NOT_FOUND.
 
-handle_subscription('PUT', _Args, Req) ->
-  {Qs, _} = cowboy_http_req:body_qs(Req),
-  [T, U, P, DT, Delay, N] = get_parameters(Qs, [<<"type">>, <<"user_id">>, <<"pinger_id">>, <<"down_time">>, <<"notification_delay">>, <<"notify_when_up">>]),
-  NotifyWhenUp = case N of
-    "on" -> "1";
-    _ -> "0"
-  end,
-  case ping_subscription_db:create(T, U, P, ?STRING_TO_MS(DT) * 60, NotifyWhenUp, ?STRING_TO_MS(Delay) * 60) of
-    {ok, Id} ->
-      Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
-      [201, Response];
-    {error, Error} ->
-      lager:warning("ERROR: ~p\n", [Error]),
-      Response = "{status: error}, {response: {msg:" ++ Error ++ "}}",
-      [400, Response]
+handle_subscription('PUT', _Args, Req,Session) ->
+  case proplists:get_value(uid, Session) of
+    undefined -> ?UNAUTHORIZED;
+    U -> 
+      {Qs, _} = cowboy_http_req:body_qs(Req),
+      [T, P, DT, Delay, N] = get_parameters(Qs, [<<"type">>, <<"pinger_id">>, <<"down_time">>, <<"notification_delay">>, <<"notify_when_up">>]),
+      NotifyWhenUp = case N of
+                       "on" -> "1";
+                       _ -> "0"
+                     end,
+      case ping_subscription_db:create(T, U, P, ?STRING_TO_MS(DT) * 60, NotifyWhenUp, ?STRING_TO_MS(Delay) * 60) of
+        {ok, Id} ->
+          Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
+          [201, Response];
+        {error, Error} ->
+          lager:warning("ERROR: ~p\n", [Error]),
+          Response = "{status: error}, {response: {msg:" ++ Error ++ "}}",
+          [400, Response]
+      end
   end;
-handle_subscription('DELETE', Args, _Req) ->
+handle_subscription('DELETE', Args, _Req,Session) ->
   Id = lists:nth(1, Args),
   Rows = ping_subscription_db:delete( binary_to_list(Id) ),
   case Rows of
@@ -151,7 +155,7 @@ handle_subscription('DELETE', Args, _Req) ->
     _ -> Response = "{status: ok}",
       [200, Response]
   end;
-handle_subscription(_, _, _) ->
+handle_subscription(_, _, _,_) ->
   ?NOT_FOUND.
 
 handle_alert('PUT', _Args, _Req) ->
