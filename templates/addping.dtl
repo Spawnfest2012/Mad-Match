@@ -84,6 +84,10 @@ jQuery(function($) {
             <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
+            <input type="text" id="pic_url" name="pic_url" value="http://" class="">
+            <label class="slightly_smaller">Pic Url</label>
+            <div id="clear"></div>
+
             <a href="#" class="button">
                 I'm Pingterested
             </a>

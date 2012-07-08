@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1,create/6,all/1,get_subscriptions/4,delete/1,firehose/2,update/2,find_all_by_user_id/1]).
+-export([find/1,create/7,all/1,get_subscriptions/4,delete/1,firehose/2,update/2,find_all_by_user_id/1]).
 
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
@@ -12,11 +12,11 @@ find(Id) ->
   [Pinger|[]] = emysql_util:as_record( Result, pinger, record_info(fields, pinger), fun ping_utils:as_record/1),
   Pinger.
 
--spec create(string(),string(),pos_integer(),string(),pos_integer(),string()) -> integer().
-create(Name,Type,UserId,EndPoint,Frequency, Data) ->
+-spec create(string(),string(),pos_integer(),string(),pos_integer(),string(),string()) -> integer().
+create(Name,Type,UserId,EndPoint,Frequency, Data, PicUrl) ->
   JsonData = jsx:encode(Data),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
-    {data,JsonData},{last_status,"down"}]).
+    {data,JsonData},{last_status,"down"},{pic_url,PicUrl}]).
 
 delete(Id) ->
   lager:info("Id ~p\n", [Id]),
