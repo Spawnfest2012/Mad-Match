@@ -475,6 +475,16 @@ overflow: hidden;
 .pinger div.conversation p a
 {
   font-weight:bold;
+  text-decoration:none;
+}
+
+.pinger div.conversation p a.down
+{
+  color:red;
+}
+.pinger div.conversation p a.up
+{
+  color:gray;
 }
 
 img.pingowner

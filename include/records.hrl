@@ -4,7 +4,7 @@
                  user_id :: pos_integer(),
                  end_point :: string(),
                  frequency :: pos_integer(), %% milliseconds
-                 last_status :: up | down, 
+                 last_status :: undefined | up | down,
                  last_check = 0 :: pos_integer(), %% milliseconds
                  data = [] :: list(), % local data to extend pinger basic info
                  subscription_count :: pos_integer(),

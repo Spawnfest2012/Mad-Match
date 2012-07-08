@@ -6,7 +6,7 @@
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_binary_to_list/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
-         random_string/1,seed/0]).
+         random_string/1,seed/0,as_record/1]).
 
 -export([pad_to16/1]).
 -export([first/3]).
@@ -194,22 +194,37 @@ seed() ->
   {ok,Migration} = file:read_file("util/migration.sql"),
   lager:info("Migration ~p",[Migration]),
   
-
   emysql:execute(ping_db,Migration),
-
 
   {ok,Uid1} = ping_user_db:create("Manuel Gomez","manuel@inaka.net","manuel","Venezuela"),
   {ok,Uid2} = ping_user_db:create("Chad Depue","chad@inaka.net","chad","United States"),
   {ok,Uid3} = ping_user_db:create("Gustavo Chain","gustavo@inaka.net","gustavo","Chile"),
   {ok,Uid4} = ping_user_db:create("Marcos Almonacid","marcos@inaka.net","marcos","Argentina"),
 
-  Pingers = [{"Prod1","ping",Uid1,"prod1.whisper.sh",120000},
-          {"Prod3","ping",Uid2,"prod3.whisper.sh",120000},
-          {"Prod4","ping",Uid3,"prod4.whisper.sh",120000},
-          {"Prod5","ping",Uid4,"prod5.whisper.sh",120000},
-          {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000}],
+  Pingers = [{"Prod1","ping",Uid1,"prod1.whisper.sh",120000,[]},
+    {"Prod3","ping",Uid2,"prod3.whisper.sh",120000,[]},
+    {"Prod4","ping",Uid3,"prod4.whisper.sh",120000,[]},
+    {"Prod5","ping",Uid4,"prod5.whisper.sh",120000,[]},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[]},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[]}
+  ],
 
-        lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,[]) end, Pingers),
+
+  lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency,Data})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,Data) end, Pingers),
 
   Subscriptions = [
   			{"email", Uid1, 1, 60000, 1, 30000},
@@ -222,3 +237,18 @@ seed() ->
 
   ok.
 
+-spec as_record(#pinger{}) -> #pinger{}.
+as_record(Pinger = #pinger{type=BinType, last_status=BinLastStatus, name=BinName, end_point=BinEndPoint}) ->
+  LastStatus = case BinLastStatus of
+                 B when is_binary(B) -> binary_to_atom(B, utf8);
+                 undefined -> undefined
+               end,
+  Name = case BinName of
+                 BN when is_binary(BN) -> binary_to_list(BN);
+                 BinName -> BinName
+               end,
+  EndPoint = case BinEndPoint of
+               BE when is_binary(BE) -> binary_to_list(BE);
+               BinEndPoint -> BinEndPoint
+             end,
+  Pinger#pinger{type = binary_to_atom(BinType, utf8), last_status= LastStatus, name=Name, end_point=EndPoint}.

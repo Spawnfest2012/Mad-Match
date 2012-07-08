@@ -53,9 +53,9 @@ get_parameter(Key, Qs) ->
 
 handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  [N, E, P, T] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>]),
-  lager:warning("creating a guy: ~p ~p ~p ~p ~n", [N, E, P, T]),
-  case ping_user_db:create(N, E, P, T) of
+  [N, E, P, T,Twitter] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>,<<"twitter">>]),
+  lager:warning("creating a guy: ~p ~p ~p ~p ~p ~n", [N, E, P, T,Twitter]),
+  case ping_user_db:create(N, E, P, T,Twitter) of
     {ok, Uid} ->
       ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
       Response = "{status: ok}, {response: {id:" ++ integer_to_list(Uid) ++ "}",
