@@ -5,7 +5,7 @@
 
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_binary_to_list/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
-         now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1, resolve_name/1, dstk_location/2,
+         now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1, 
          random_string/1,seed/0,as_record/1]).
 
 -export([pad_to16/1]).
@@ -70,34 +70,6 @@ month(9) -> "Sep";
 month(10) -> "Oct";
 month(11) -> "Nov";
 month(12) -> "Dec".
-
--spec dstk_location(float(),float()) -> [binary()].
-dstk_location(Lat,Lon) ->
-  [LatStr] = io_lib:format("~w", [Lat]),
-  [LonStr] = io_lib:format("~w", [Lon]),
-  try
-    case ibrowse:send_req("http://www.datasciencetoolkit.org/coordinates2demographics/"++LatStr++","++LonStr,[],get) of
-      {ok,"200",_Headers,Body} ->
-        [JsonData] = inaka_json:decode(Body),
-        PoliticsData = inaka_json:get_value(politics,JsonData),
-        lists:usort(lists:map(fun(Area)->
-          inaka_json:get_value(name,Area) 
-          end,PoliticsData));
-      _ -> []
-    end
-  catch
-    _:_ -> lager:error("datasciencetoolkit location",[]), []
-  end.
-
-%%-spec datasciencetoolkit_location_from_ip(binary()) -> binary().
-
-
--spec resolve_name(list()) -> list().
-resolve_name(Server) -> 
-  case inet:gethostbyname(Server) of
-    {error,nxdomain} -> "8.8.8.8";   %% HACK FOR SPAWNFEST DEMO - don't know where the server is, give them google!?
-    {ok,{hostent,_,_,_,_, [{A,B,C,D}]}} -> integer_to_list(A) ++ "." ++ integer_to_list(B) ++ "." ++ integer_to_list(C) ++ "." ++ integer_to_list(D)
-  end.
 
 escape(Html) when is_list(Html) -> escape(list_to_binary(Html));
 escape(Html) -> wf_utils:js_escape(Html).
