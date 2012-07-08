@@ -5,6 +5,7 @@
 -include("records.hrl").
 
 handle_ping(Pinger) ->
+lager:info("Data: ~p\n", [Pinger#pinger.data]),
   Data = jsx:decode(Pinger#pinger.data),
   Status = case lists:keyfind("status", 1, Data) of
     false -> "200";
