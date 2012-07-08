@@ -188,16 +188,30 @@ random_string(Len) ->
 -spec seed() -> ok.
 seed() ->
   
-  {ok,Migration} = file:read_file("src/migration.sql"),
+  {ok,Migration} = file:read_file("util/migration.sql"),
   lager:info("Migration ~p",[Migration]),
   
 
   emysql:execute(ping_db,Migration),
 
 
-  {ok,Uid} = ping_user_db:create("Master Pinger","alerts@pingtere.sh","nopingforyou",""),
+  {ok,Uid1} = ping_user_db:create("Manuel Gomez","manuel@inaka.net","manuel","Venezuela"),
+  {ok,Uid2} = ping_user_db:create("Chad Depue","chad@inaka.net","chad","United States"),
+  {ok,Uid3} = ping_user_db:create("Gustavo Chain","gustavo@inaka.net","gustavo","Chile"),
+  {ok,Uid4} = ping_user_db:create("Marcos Almonacid","marcos@inaka.net","marcos","Argentina"),
 
-  Apps = [{"Prod1","ping",Uid,"prod1.whisper.sh",60000},{"Prod3","ping",Uid,"prod3.whisper.sh",60000},{"Prod4","ping",Uid,"prod4.whisper.sh",60000},{"Prod5","ping",Uid,"prod5.whisper.sh",60000}],
-  lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency) end, Apps),
+  Pingers = [{"Prod1","ping",Uid1,"prod1.whisper.sh",120000},
+          {"Prod3","ping",Uid2,"prod3.whisper.sh",120000},
+          {"Prod4","ping",Uid3,"prod4.whisper.sh",120000},
+          {"Prod5","ping",Uid4,"prod5.whisper.sh",120000},
+          {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000}],
+
+        lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,[]) end, Pingers),
+
+  Subscriptions = [{"email", Uid1, 1, 60000, 1},{"email", Uid2, 2, 60000, 1},{"email", Uid3, 3, 60000, 1},{"email", Uid4, 4, 60000, 1}],
+
+  lists:foreach(fun({Type, UserId, PingerId, DownTime, NotifyWhenUp})-> ping_subscription_db:create(Type, UserId, PingerId, DownTime, NotifyWhenUp) end, Subscriptions),
+  
+
   ok.
 

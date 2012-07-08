@@ -1,5 +1,9 @@
+<div class="grid_5 suffix_5">
+<div id='pingboard' class="transitions-enabled infinite-scroll clearfix masonry" style="margin:50px 0 0 0;">
 {% for p in pingers %}
    {{ p }}
 {% endfor %}
+</div>
+</div>
 <div class="clear"/>
 

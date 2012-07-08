@@ -28,7 +28,7 @@ jQuery(function($) {
 <div id="signup_header">
 <img src="/images/pingterest_small.png"/>
 </div>
-<h1> Sign up to Pingterest</h1>
+<h1> Edit Your Pingterest Account</h1>
 {% include "form.dtl" %}
 </div>
 {% include "footer.dtl" %}
