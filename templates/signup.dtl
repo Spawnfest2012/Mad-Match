@@ -2,10 +2,10 @@
 <script type=text/javascript>
 jQuery(function($) {
 
-  $(this).find("a.button").click(function() {
-    if (!$('a.button').hasClass('disabled'))
+  $(this).find("a.button2").click(function() {
+    if (!$('a.button2').hasClass('disabled'))
     {
-      $('a.button').addClass('disabled');
+      $('a.button2').addClass('disabled');
       $.ajax({type:'PUT', url: '/api/user', data:$('#theform').serialize(), statusCode: 
         { 
           201: function() {
@@ -13,7 +13,7 @@ jQuery(function($) {
                },
           400: function() {
                  alert('check your email - in use');
-                 $('a.button').removeClass('disabled');
+                 $('a.button2').removeClass('disabled');
                }
         }
       });
