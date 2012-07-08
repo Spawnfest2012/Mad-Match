@@ -13,7 +13,7 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--export([find/2,create/2, delete/2]).
+-export([find/2,create/2, delete/2,update/2]).
 
 -record(state, {}).
 
@@ -32,15 +32,19 @@ stop(Pid) when is_pid(Pid) ->
 execute(Query) ->
   emysql:execute(?MODULE, Query).
 
--spec find(binary(),[{atom,term()}]) -> list().
+-spec find(string(),[{atom,term()}]) -> list().
 find(Table,Options) -> 
   gen_server:call(?MODULE, {find,Table,Options}).
 
--spec create(binary(),[{atom,term()}]) -> list().
+-spec create(string(),[{atom,term()}]) -> list().
 create(Table,Fields) -> 
   gen_server:call(?MODULE, {create,Table,Fields}).
 
--spec delete(binary(),[{atom,term()}]) -> list().
+-spec update(string(),[{atom,term()}]) -> list().
+update(Table,Options) -> 
+  gen_server:call(?MODULE, {update,Table,Options}).
+
+-spec delete(string(),[{atom,term()}]) -> list().
 delete(Table, Options) ->
   gen_server:call(?MODULE, {delete, Table, Options}).
 
@@ -76,13 +80,22 @@ handle_call({delete,Table,Options}, _From, State) ->
   Query = list_to_binary("DELETE FROM " ++ Table ++ add_options(Options)),
   lager:info("Query ~p",[Query]),
   emysql:prepare(list_to_atom("delete_" ++Table),Query),
-  Values = get_values(Options),
+  Values = get_values(lists),
   lager:info("Values ~p",[Values]),
   Reply = case emysql:execute(?MODULE,list_to_atom("delete_" ++Table),Values) of
     {ok_packet,_,Rows,_,_,_,_}          -> Rows;
     {error_packet, _, _, _, Msg} -> {error, Msg}
   end,
   {reply, Reply, State};
+handle_call({update,Table,Options}, _From, State) ->
+  Query = list_to_binary("UPDATE " ++ Table ++ " set " ++ add_options(Options)),
+  emysql:prepare(list_to_atom("update_" ++Table),Query),
+  Values = get_values(Options),
+  Result = case emysql:execute(?MODULE,list_to_atom("update_" ++Table),Values) of
+            {ok_packet,_,_,_,_,_,_} -> ok;
+            _ -> error
+           end,
+  {reply, Result, State};
 handle_call(_Request, _From, State) ->
   Reply = ok,
   {reply, Reply, State}.
@@ -109,14 +122,16 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %% --------------------------------------------------------------------
 
--spec add_options([{atom(),term()}]) -> {ok,string()} | {error,term()}.
+-spec add_options([{where|update,term()}]) -> {ok,string()} | {error,term()}.
 add_options([]) ->
   "";
-add_options([Option|Rest]) ->
-  add_option(Option) ++
-  add_options(Rest).
+add_options(Options) ->
+  add_option(lists:keyfind(update,1,Options)) ++
+  add_option(lists:keyfind(where,1,Options)).
 
--spec add_option({where,[{atom, string()}]}) -> string().
+-spec add_option({where|update,[{atom, string()}]}|false) -> string().
+add_option(false) ->
+  [];
 add_option({where,[]}) ->
   [];
 add_option({where,Filters}) ->
@@ -134,18 +149,33 @@ add_option({where,Filters}) ->
                   {_,{Key,From,To}} ->
                     Acc ++ atom_to_list(Key) ++ " BETWEEN '" ++ From ++ "' AND '" ++ To ++ "' AND "
                 end
-              end, "", Filters).
+              end, "", Filters);
+add_option({update,Updates}) ->
+  lists:foldl(fun(Update,Acc) ->
+                %% If Update's not the last, add " ," to the end
+                case {lists:last(Updates), Update} of
+                  {Update,{Key,_}} ->
+                    Acc ++ atom_to_list(Key) ++ " = ? ";
+                  {_,{Key,_}} ->
+                    Acc ++ atom_to_list(Key) ++ " = ? , "
+                end
+              end, "", Updates).
 
 
 -spec get_values([{atom(),term()}]) -> {ok,string()} | {error,term()}.
 get_values([]) ->
   [];
-get_values([Option|Rest]) ->
-  get_value(Option) ++
-  get_values(Rest).
+get_values(Options) ->
+  lager:info("~p~n",[Options]),
+  get_value(lists:keyfind(update,1,Options)) ++
+  get_value(lists:keyfind(where,1,Options)).
 
--spec get_value({where,[{atom, string()}]}) -> string().
+-spec get_value({where|update,[{atom, string()}]}|false) -> string().
+get_value(false) ->
+  [];
 get_value({where,[]}) ->
   [];
 get_value({where,Filters}) ->
-  lists:map(fun({_,Value})-> Value end,Filters).
+  lists:map(fun({_,Value})-> Value end,Filters);
+get_value({update,Updates}) ->
+  lists:map(fun({_,Value})-> Value end,Updates).
