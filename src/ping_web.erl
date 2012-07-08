@@ -15,6 +15,7 @@ start_link(_Host,Port) ->
     %% {Host, list({Path, Handler, Opts})}
     {'_', [
 
+          {[<<"websocket">>],     ping_web_handler_ws, []},
           {[<<"api">>, '...'],    ping_web_handler_api, []},
 
           {[],                    ping_web_handler_static, [<<"index">>]},
@@ -22,6 +23,8 @@ start_link(_Host,Port) ->
       ]
     }
   ],
+
+  pg2:create("ws"),
 
   %% Name, NbAcceptors, Transport, TransOpts, Protocol, ProtoOpts
   cowboy:start_listener(ping_web_http_listener, 100,
