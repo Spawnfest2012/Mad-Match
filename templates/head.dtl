@@ -6,6 +6,7 @@
   <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
   <script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
   <script src="/javascripts/jquery.masonry.min.js"></script>
+  <script src="/javascripts/jquery.placeholder.js"></script>
   <script src="/javascripts/modernizr-transitions.js"></script>
   <script src="/javascripts/jquery.infinitescroll.min.js"></script>
   </head>
