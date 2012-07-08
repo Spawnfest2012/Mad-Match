@@ -39,10 +39,10 @@ jQuery(function($) {
 <h1> Login to Pingterest</h1>
 <div id="signup_form">
 <form id="theform">
-<input type="text" id="email" name="email" class="">
+<input type="text" id="email" name="email" >
 <label>Email</label>
 <div id="clear"/>
-<input type="text" id="password" name="password" class="">
+<input type="password" id="password" name="password" >
 <label class="lefter">Password</label>
 <div id="clear"/>
 
