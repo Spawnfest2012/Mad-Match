@@ -42,7 +42,7 @@ jQuery(function($) {
 <input type="text" id="email" name="email" >
 <label>Email</label>
 <div id="clear"/>
-<input type="password" id="password" name="password" >
+<input type="password" id="password" name="password" class="">
 <label class="lefter">Password</label>
 <div id="clear"/>
 
