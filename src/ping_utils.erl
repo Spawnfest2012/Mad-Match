@@ -28,7 +28,7 @@ time_diff_now(Then) ->
     Now = ?MODULE:now(),
     time_diff(trunc((Now - Then)/1000)).
 
-time_diff(Diff) when Diff < 10 -> "just now";
+time_diff(Diff) when Diff < 10 -> "a few seconds";
 time_diff(Diff) when Diff < (?MIN) -> [integer_to_list(Diff), " seconds"];
 time_diff(Diff) when Diff < (?HOUR) ->
   case trunc(Diff / (?MIN)) of
