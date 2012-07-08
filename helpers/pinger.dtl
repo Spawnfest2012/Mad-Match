@@ -2,7 +2,7 @@
   <div class="pinger_holder">
     <div class="actions">
       <a class="button_action" id="action_{{id}}" href="/subscribe/{{id}}/">
-        PinIt
+        PingIt!
       </a>
     </div>
     {# middle of the ping  #}
@@ -12,7 +12,11 @@
     </div>
     <p class="server_name">&nbsp;{{ name }}</p>
     <div class="conversation">
-      <img class="pingowner" src="http://media-cache-ec7.pinterest.com/avatars/thechubbydove-61.jpg"> 
+      {% if last_status == 'up' %}
+        <img class="pingowner" src="/images/ampelmann.png"> 
+      {% else %}
+        <img class="pingowner" src="/images/ampelmann_down.png"> 
+      {% endif %}
       <p> <strong>Manuel</strong> I can't ping it either</p>
     </div>
   </div>

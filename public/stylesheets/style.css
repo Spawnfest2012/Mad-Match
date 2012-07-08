@@ -365,14 +365,19 @@ ul.menu li {
 #signup label
 {
   position:relative;
-  z-index:2;
-  left:330px;
-  font-size: 32px;
+  z-index:-2;
+  left:360px;
+  font-size: 27px;
   font-weight: -10;
   color: #eee;
 
 }
 
+#signup label.slightly_smaller
+{
+  left:330px;
+  font-size:23px;
+}
 
 /* pingers  */
 div.pinger
@@ -385,6 +390,53 @@ div.pinger
 div.pinger a.button_action
 {
   position:absolute;
+  left:20px;
+  top:20px;
+  background-color: #F0EDED;
+  background-image: -webkit-linear-gradient(top, #FDFAFB, #F9F7F7 50%, #F6F3F4 50%, #F0EDED);
+  border-radius: 6px;
+  border-color: #524D4D;
+  box-shadow: rgba(255, 255, 255, 0.3) 0px 1px 0px 0px inset, rgba(140, 126, 126, 0.4) 0px 0px 0px 1px;
+  clear: none;
+  color: #524D4D;
+  float: left;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 11px;
+  margin-right: 5px;
+  outline-color: #524D4D;
+  padding: 7px 9px 7px 9px;
+  text-decoration: none;
+  
+}
+
+div.pinger a.stats
+{
+  position:absolute;
+  left:20px;
+  top:20px;
+  background-color: #F0EDED;
+  background-image: -webkit-linear-gradient(top, #FDFAFB, #F9F7F7 50%, #F6F3F4 50%, #F0EDED);
+  border-radius: 6px;
+  border-color: #524D4D;
+  box-shadow: rgba(255, 255, 255, 0.3) 0px 1px 0px 0px inset, rgba(140, 126, 126, 0.4) 0px 0px 0px 1px;
+  clear: none;
+  color: #524D4D;
+  float: left;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 11px;
+  margin-right: 5px;
+  outline-color: #524D4D;
+  padding: 7px 9px 7px 9px;
+  text-decoration: none;
+  
+}
+
+div.pinger a:hover
+{
+  background-color: red;
+  background-image: -webkit-linear-gradient(top, #f2f0f0, #f7f7f7 50%, #f6f6f6 50%, #f0f0f0);
 }
 
 div.pinger img.logo

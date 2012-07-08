@@ -17,7 +17,7 @@ create(Name,Type,UserId,EndPoint,Frequency, Data) ->
   JsonData = jsx:encode(Data),
   lager:info(">>>>>> ~p ~p ~p ~p ~p ~p\n", [Name, Type, UserId, EndPoint, Frequency, JsonData]),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
-    {data,JsonData}]).
+    {data,JsonData},{last_status,"down"}]).
 
 delete(Id) ->
   lager:info("Id ~p\n", [Id]),
