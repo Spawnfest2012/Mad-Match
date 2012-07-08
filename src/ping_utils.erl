@@ -22,31 +22,31 @@
 -define(HOUR, 3600).
 -define(DAY, 86400).
 -define(WEEK, 604800).
+-define(YEAR, 31556926).
 
 time_diff_now(Then) ->
     Now = ?MODULE:now(),
-    case trunc((Now - Then)/1000) of
-      Diff when Diff < (?WEEK) -> time_diff(Diff);
-      _Else -> date(Then)
-    end.
+    time_diff(trunc((Now - Then)/1000)).
 
-time_diff(Diff) when Diff < 10 -> "A few seconds ago";
-time_diff(Diff) when Diff < (?MIN) -> [integer_to_list(Diff), " seconds ago"];
+time_diff(Diff) when Diff < 10 -> "a few seconds";
+time_diff(Diff) when Diff < (?MIN) -> [integer_to_list(Diff), " seconds"];
 time_diff(Diff) when Diff < (?HOUR) ->
-    case trunc(Diff / (?MIN)) of
-      1 -> "About one minute ago";
-      M -> [integer_to_list(M), " minutes ago"]
-    end;
+  case trunc(Diff / (?MIN)) of
+    1 -> "about one minute";
+    M -> [integer_to_list(M), " minutes"]
+  end;
 time_diff(Diff) when Diff < (?DAY) ->
-    case trunc(Diff / (?HOUR)) of
-      1 -> "An hour ago";
-      H -> [integer_to_list(H), " hours ago"]
-    end;
+  case trunc(Diff / (?HOUR)) of
+    1 -> "an hour";
+    H -> [integer_to_list(H), " hours"]
+  end;
+time_diff(Diff) when Diff < (?YEAR * 5) ->
+  case trunc(Diff / (?YEAR)) of
+    1 -> "a year";
+    D -> [integer_to_list(D), " years"]
+  end;
 time_diff(Diff) ->
-    case trunc(Diff / (?DAY)) of
-      1 -> "Yesterday";
-      D -> [integer_to_list(D), " days ago"]
-    end.
+  "a long time".
 
 hour(Secs) ->
     {_, {H, M, S}} = calendar:gregorian_seconds_to_datetime(Secs),

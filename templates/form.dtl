@@ -1,22 +1,22 @@
 <div id="signup_form">
 <form id="theform">
-<input type="text" id="name" name="name" class="">
+<input type="text" id="name" name="name" placeholder="Name" value="{{name}}">
 <label>Name</label>
 <div id="clear"/>
-<input type="text" id="email" name="email" class="">
+<input type="text" id="email" name="email" placeholder="Email" value="{{email}}">
 <label>Email</label>
 <div id="clear"/>
-<input type="password" id="password" name="password" class="">
+<input type="password" id="password" name="password" placeholder="{{password_label}}" value="">
 <label class="lefter">Password</label>
 <div id="clear"/>
-<input type="text" id="twitter" name="twitter" class="">
-<label>Twitter</label>
+<input type="text" id="twitter" name="twitter" placeholder="Twitter handle" value="{{twitter}}">
+<label>Twitter handle</label>
 <div id="clear"/>
-<input type="text" id="tagline" name="tagline" class="">
+<input type="text" id="tagline" name="tagline" placeholder="Tagline" value="{{tagline}}">
 <label>Tagline</label>
 <div id="clear"/>
 
-<a href="#" class="button">
+<a href="#" class="button2">
 {{ button_label }}
 </a>
 </form>

@@ -56,10 +56,10 @@
     <div class="conversation">
       {% if last_status == 'up' %}
         <img class="pingowner" src="/images/ampelmann.png"> 
-        <p> <a href='/user/{{user_id}}' class="up"><strong>{{ user_name }}</strong></a> I've been pinging that since about {{ last_check }} milliseconds ago</p>
+        <p> <a href='/user/{{user_id}}' class="up">Owner: <strong>{{ user_name }}</strong></a><br>{{ time_in_words }}</p>
       {% else %}
         <img class="pingowner" src="/images/ampelmann_down.png"> 
-        <p> <a href='/user/{{user_id}}' class="down"><strong>{{ user_name }}</strong></a> She ain't talking since about {{ last_check }} milliseconds ago</p>
+        <p> <a href='/user/{{user_id}}' class="down">Owner: <strong>{{ user_name }}</strong></a>{{ time_in_words }} </p>
       {% endif %}
     </div>
   </div>
