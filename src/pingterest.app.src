@@ -4,6 +4,7 @@
   {vsn, "0.0.0"},
   {applications, [kernel, stdlib, inets]},
   {mod, {pingterest, []}},
+  {start_phases, [{boot,undefined}]},
   {env, [
   
   ]}

@@ -5,7 +5,8 @@
 -export([
    start/0,
    start/2,
-   stop/1
+   stop/1,
+   start_phase/3
         ]).
 
 -export([]).
@@ -26,6 +27,10 @@ start(_Type, _StartArgs) ->
     Error ->
       {error, Error}
   end.
+
+-spec start_phase(boot,term(),undefined) -> ok.
+start_phase(boot,_,undefined) ->
+  lists:foreach(fun ping_pinger_sup:start_pinger/1,ping_pinger_db:all([])).
 
 -spec stop(any()) -> ok.
 stop(_State) ->

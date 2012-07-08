@@ -16,11 +16,12 @@ start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% @doc  Starts a new client process
--spec start_pinger(tuple()) -> {ok, pid()} | {error, term()}.
+-spec start_pinger(tuple()|#pinger{}) -> {ok, pid()} | {error, term()}.
 start_pinger({Id,Name,Type,UserId,EndPoint,Frequency,Data}) ->
-  _ = random:seed(erlang:now()),
-  
   Pinger = #pinger{id=Id,name=Name,type=Type,user_id=UserId,end_point=EndPoint,frequency=Frequency,data=Data},
+  start_pinger(Pinger);
+start_pinger(Pinger) ->
+  _ = random:seed(erlang:now()),
   Manager =
     list_to_atom("ping-pinger-manager-" ++ integer_to_list(random:uniform(?MANAGERS))),
   supervisor:start_child(Manager, [Pinger]).
