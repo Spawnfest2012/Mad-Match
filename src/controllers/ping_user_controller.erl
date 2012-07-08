@@ -8,7 +8,7 @@
 -export([render/2]).
 
 render(Req,Session) ->
-  Userid = ?BASE_MODULE:param(Req,2),
+  UserId = ?BASE_MODULE:param(Req,2),
   case UserId of
     undefined -> 
       ?BASE_MODULE:redirect(302,<<"/">>,Req);
