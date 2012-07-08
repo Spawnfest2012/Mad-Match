@@ -1,5 +1,5 @@
 <script type=text/javascript>
-    var socket = new WebSocket("ws://localhost:4000/websocket");
+    var socket = new WebSocket("ws://pingtere.st/websocket");
     socket.onmessage = function(message) {
         data = JSON.parse(message.data);
 //        console.log(message);
