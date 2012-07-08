@@ -13,8 +13,78 @@
 -export([positive/1]).
 -export([record_to_proplist/1]). 
 
+-export([date/1, escape/1, hour/1, sanitize/1, time_diff_now/1]).
+
 -type datetime() :: {{pos_integer(), 1..12, 1..31}, {0..23, 0..59, 0..59}}.
 -export_type([datetime/0]).
+
+-define(MIN, 60).
+-define(HOUR, 3600).
+-define(DAY, 86400).
+-define(WEEK, 604800).
+
+time_diff_now(Then) ->
+    Now = ?MODULE:now(),
+    case trunc((Now - Then)/1000) of
+      Diff when Diff < (?WEEK) -> time_diff(Diff);
+      _Else -> date(Then)
+    end.
+
+time_diff(Diff) when Diff < 10 -> "A few seconds ago";
+time_diff(Diff) when Diff < (?MIN) -> [integer_to_list(Diff), " seconds ago"];
+time_diff(Diff) when Diff < (?HOUR) ->
+    case trunc(Diff / (?MIN)) of
+      1 -> "About one minute ago";
+      M -> [integer_to_list(M), " minutes ago"]
+    end;
+time_diff(Diff) when Diff < (?DAY) ->
+    case trunc(Diff / (?HOUR)) of
+      1 -> "An hour ago";
+      H -> [integer_to_list(H), " hours ago"]
+    end;
+time_diff(Diff) ->
+    case trunc(Diff / (?DAY)) of
+      1 -> "Yesterday";
+      D -> [integer_to_list(D), " days ago"]
+    end.
+
+hour(Secs) ->
+    {_, {H, M, S}} = calendar:gregorian_seconds_to_datetime(Secs),
+    io_lib:format("~2.10.0B:~2.10.0B:~2.10.0B", [H, M, S]).
+
+date(Secs) ->
+    {{Y, Mo, D}, {H, M, S}} = calendar:gregorian_seconds_to_datetime(Secs),
+    [month(Mo),
+     io_lib:format(" ~2.10.0B ~4.10.0B, ~2.10.0B:~2.10.0B:~2.10.0B",
+       [D, Y, H, M, S])].
+
+month(1) -> "Jan";
+month(2) -> "Feb";
+month(3) -> "Mar";
+month(4) -> "Apr";
+month(5) -> "May";
+month(6) -> "Jun";
+month(7) -> "Jul";
+month(8) -> "Aug";
+month(9) -> "Sep";
+month(10) -> "Oct";
+month(11) -> "Nov";
+month(12) -> "Dec".
+
+escape(Html) when is_list(Html) -> escape(list_to_binary(Html));
+escape(Html) -> wf_utils:js_escape(Html).
+
+sanitize(Html) when is_list(Html) -> sanitize(list_to_binary(Html));
+sanitize(Html) -> sanitize(Html, <<>>).
+
+sanitize(<<>>, Acc) -> Acc;
+sanitize(<<$<, Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "&lt;">>);
+sanitize(<<$>, Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "&gt;">>);
+sanitize(<<$", Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "&quot;">>);
+sanitize(<<$', Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "&#39;">>);
+sanitize(<<$&, Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "&amp;">>);
+sanitize(<<$\n, Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, "<br />">>);
+sanitize(<<C, Rest/binary>>, Acc) -> sanitize(Rest, <<Acc/binary, C>>).
 
 record_to_proplist(#pinger{} = Rec) ->
   lists:zip(record_info(fields, pinger), tl(tuple_to_list(Rec)));
@@ -104,7 +174,7 @@ pad_to16(Bin) ->
 
 -spec now() -> integer().
 now() ->
-  {_, Secs, _} = erlang:now(),
+  Secs = calendar:datetime_to_gregorian_seconds(calendar:universal_time()),
   Secs * 1000.
   
 -spec dateadd(datetime(), integer()) -> datetime().
