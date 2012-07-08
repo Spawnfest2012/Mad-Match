@@ -2,18 +2,19 @@
 <script type=text/javascript>
 jQuery(function($) {
 
-  $(this).find("a.button").click(function() {
-    if (!$('a.button').hasClass('disabled'))
+  $(this).find("a.button2").click(function() {
+    if (!$('a.button2').hasClass('disabled'))
     {
-      $('a.button').addClass('disabled');
-      $.ajax({type:'PUT', url: '/api/user', data:$('#theform').serialize(), statusCode: 
+      console.log('here');
+      $('a.button2').addClass('disabled');
+      $.ajax({type:'POST', url: '/api/user', data:$('#theform').serialize(), statusCode: 
         { 
-          201: function() {
+          200: function() {
                  window.location = '/';
                },
           400: function() {
-                 alert('check your email - in use');
-                 $('a.button').removeClass('disabled');
+                 alert('please check your password...');
+                 $('a.button2').removeClass('disabled');
                }
         }
       });
