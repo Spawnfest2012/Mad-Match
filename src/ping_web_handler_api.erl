@@ -29,7 +29,7 @@ handle(R, State) ->
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(LoggedIn, Method, Args, Req, Session);
-    <<"subscription">> -> handle_subscription(Method, Args, Req,Session);
+    <<"subscription">> -> handle_subscription(Method, Args, Req, Session);
     <<"alert">>        -> handle_alert(Method, Args, Req);
     _                  -> handle_unknown(Method, Args, Req)
   end,
@@ -146,7 +146,18 @@ handle_subscription('PUT', _Args, Req,Session) ->
           [400, Response]
       end
   end;
-handle_subscription('DELETE', Args, _Req,Session) ->
+handle_subscription('GET', Args, _Req, _Session) ->
+  Id = lists:nth(1, Args),
+  Subscribers = lists:map(
+      fun(S) -> [
+            {id, S#subscription.id},
+            {type, S#subscription.type},
+            {pinger_id, S#subscription.pinger_id},
+            {notification_delay, S#subscription.notification_delay}]
+      end, ping_subscription_db:find_by_user(ping_utils:binary_to_integer(Id))),
+  Response = [{<<"status">>, <<"ok">>}, {<<"response">>, Subscribers}],
+  [200, jsx:encode(Response)];
+handle_subscription('DELETE', Args, _Req, _Session) ->
   Id = lists:nth(1, Args),
   Rows = ping_subscription_db:delete( binary_to_list(Id) ),
   case Rows of
@@ -155,7 +166,7 @@ handle_subscription('DELETE', Args, _Req,Session) ->
     _ -> Response = "{status: ok}",
       [200, Response]
   end;
-handle_subscription(_, _, _,_) ->
+handle_subscription(_, _, _, _) ->
   ?NOT_FOUND.
 
 handle_alert('PUT', _Args, _Req) ->
