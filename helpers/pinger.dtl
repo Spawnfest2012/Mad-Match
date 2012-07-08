@@ -1,4 +1,4 @@
-<div class="pinger col"  id="{{id}}">
+<div class="pinger col"  id="pinger_{{id}}">
   <div class="pinger_holder">
     <div class="actions">
       <a class="button_action" id="action_{{id}}" href="#">
@@ -49,8 +49,8 @@
       </form>
     </div>
 
-    <div class="server_image">
-      <img class="logo" src="http://media-cache-ec3.pinterest.com/upload/284219426453094726_AM2ZwHfR_b.jpg">
+    <div class="server_image" id="server_image_{{id}}" text="{{location}}" maped="false" image="http://whisper.sh/assets/mapicon-47339df1c4fccc0425f6b18e2511a298.png">
+    <img src="/images/default_map.png">
     </div>
     <p class="server_name">&nbsp;{{ name }}</p>
     <div class="conversation">
