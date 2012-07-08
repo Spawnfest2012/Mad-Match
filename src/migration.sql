@@ -1,4 +1,4 @@
-DROP TABLE `users`;
+DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE  `users` (
  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
@@ -11,9 +11,9 @@ CREATE TABLE  `users` (
 UNIQUE (`email`)
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE `pingers`;
+DROP TABLE IF EXISTS `pingers`;
 
-CREATE TABLE  `pingers` (
+CREATE TABLE IF EXISTS  `pingers` (
  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
  `name` VARCHAR( 50 ) NOT NULL ,
  `type` VARCHAR( 50 ) NOT NULL ,
@@ -25,9 +25,9 @@ CREATE TABLE  `pingers` (
  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;
 
-DROP TABLE `subscriptions`;
+DROP TABLE IF EXISTS `subscriptions`;
 
-CREATE TABLE  `subscriptions` (
+CREATE TABLE IF EXISTS  `subscriptions` (
  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
  `type` VARCHAR( 50 ) NOT NULL ,
  `user_id` INT NOT NULL ,
