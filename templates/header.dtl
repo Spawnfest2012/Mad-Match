@@ -59,11 +59,10 @@ jQuery(function($) {
   <div class="grid_3">
   <div id="logo"><img src="/images/pingterest_small.png"></div>
   </div>
-  <div class="grid_1">
+  <div class="grid_2">
   <ul class="menu">
       {% if is_logged_in %}
-      <li><a href="/addping">Add&nbsp;Server</a></li>
-      <li><a href="/edit">Account</a></li>
+      <li><a href="/addping">Add</a></li>
       <li><a href="#" id="logout">Logout</a></li>
       {% else %}
       <li><a href="/login">Login</a></li>

@@ -16,7 +16,7 @@ find(Id) ->
 create(Name,Type,UserId,EndPoint,Frequency, Data) ->
   JsonData = jsx:encode(Data),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
-    {data,JsonData}]).
+    {data,JsonData},{last_status,"down"}]).
 
 delete(Id) ->
   lager:info("Id ~p\n", [Id]),
@@ -30,7 +30,7 @@ Result = ping_db:find(?PINGER_TABLE,Options),
 
 -spec firehose(pos_integer(),pos_integer()) -> [#user{}].
 firehose(Page,PageSize) -> 
-  Query = " SELECT p.*, count(s.id) as subscription_count FROM " ++ ?PINGER_TABLE ++ " p LEFT OUTER JOIN " ++ ?SUBSCRIPTION_TABLE ++ " s ON s.pinger_id = p.id GROUP BY p.id ORDER BY last_status DESC, subscription_count DESC LIMIT ?, ?",
+  Query = " SELECT p.*, u.name as user_name, u.tagline as user_tagline, count(s.id) as subscription_count FROM " ++ ?PINGER_TABLE ++ " p LEFT OUTER JOIN " ++ ?SUBSCRIPTION_TABLE ++ " s ON s.pinger_id = p.id INNER JOIN " ++ ?USER_TABLE ++ " u ON u.id = p.user_id GROUP BY p.id ORDER BY last_status DESC, subscription_count DESC LIMIT ?, ?",
   emysql:prepare(list_to_atom("firehose"),Query),
   Result = emysql:execute(ping_db,list_to_atom("firehose"),[Page,PageSize]),
   emysql_util:as_record(
@@ -55,4 +55,4 @@ get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
 
 -spec update(pos_integer(),[{atom(),string()}]) -> ok|error.
 update(PingerId,Updates) ->
-  ping_db:update(?PINGER_TABLE, [{where,[{id,PingerId}]},{update,Updates}]).
+  ping_db:update(?PINGER_TABLE, [{where,[id,PingerId]},{update,Updates}]).

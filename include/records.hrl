@@ -8,6 +8,8 @@
                  last_check = 0 :: pos_integer(), %% milliseconds
                  data = [] :: list(), % local data to extend pinger basic info
                  subscription_count :: pos_integer(),
+                 user_name :: string(),
+                 user_tagline :: string(),
                  created_at :: term()
                 }).
 -record(subscription,{ id             :: pos_integer(),
