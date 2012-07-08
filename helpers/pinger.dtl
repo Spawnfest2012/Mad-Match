@@ -6,10 +6,10 @@
       </a>
     </div>
     {# middle of the ping  #}
-    <div class="subscription" style="position:absolute;display:none;background-color:red">
+    <div class="subscription" id="subscription" >
       <form>
         <input type="hidden" id="subscription_pinger_id" name="pinger_id" value="{{id}}" />
-        <input type="hidden" id="subscription_user_id" name="user_id" value="{{user_id}}" />
+        <input type="hidden" id="subscription_user_id" name="user_id" value="{{uid}}" />
         <div>
           Notify using
           <select id="subscription_type" name="type">
@@ -38,7 +38,7 @@
           </select>
         </div>
         <div>
-          Notifyme when up?
+          Notify me when up?
           <input id="subscription_notify_when_up" name="notify_when_up" type="checkbox" />
           <input type="hidden" id="subscription_notify_when_up_fallback" name="notify_when_up" value="0" />
         </div>

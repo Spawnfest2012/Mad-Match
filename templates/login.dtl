@@ -2,6 +2,10 @@
 <script type=text/javascript>
 jQuery(function($) {
 
+  $(this).find("a.button.signupinstead").click(function() {
+    window.location = "/signup";
+  });
+
   $(this).find("a.button").click(function() {
     if (!$('a.button').hasClass('disabled'))
     {
@@ -44,6 +48,10 @@ jQuery(function($) {
 
 <a href="#" class="button">
 Log me in, Please!
+</a>
+&nbsp;
+<a href="#" class="button signupinstead">
+Sign Up
 </a>
 </form>
 </div>
