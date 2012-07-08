@@ -9,6 +9,9 @@
 <input type="password" id="password" name="password" class="">
 <label class="lefter">Password</label>
 <div id="clear"/>
+<input type="text" id="twitter" name="twitter" class="">
+<label>Twitter</label>
+<div id="clear"/>
 <input type="text" id="tagline" name="tagline" class="">
 <label>Tagline</label>
 <div id="clear"/>

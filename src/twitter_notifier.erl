@@ -24,9 +24,9 @@ handle_event(#event{ type = Type, pinger = Pinger, down_time = DownTime }, State
   case Type of
     pinger_down ->
       DownTimeMins = trunc((DownTime/1000)/60),
-      lists:foreach(fun(TwitterHandle) -> send(?PINGER_DOWN_TWEET(binary_to_list(TwitterHandle),Pinger#pinger.name,DownTimeMins)) end, Twitters);
+      lists:foreach(fun(TwitterHandle) -> send(?PINGER_DOWN_TWEET(binary_to_list(TwitterHandle),Pinger#pinger.end_point,DownTimeMins)) end, Twitters);
     pinger_up ->
-      lists:foreach(fun(TwitterHandle) -> send(?PINGER_UP_TWEET(binary_to_list(TwitterHandle),Pinger#pinger.name)) end, Twitters)
+      lists:foreach(fun(TwitterHandle) -> send(?PINGER_UP_TWEET(binary_to_list(TwitterHandle),Pinger#pinger.end_point)) end, Twitters)
   end,
   {ok, State};
 handle_event(Event, State) ->

@@ -51,9 +51,9 @@ get_parameter(Key, Qs) ->
 
 handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  [N, E, P, T] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>]),
-  lager:warning("creating a guy: ~p ~p ~p ~p ~n", [N, E, P, T]),
-  case ping_user_db:create(N, E, P, T) of
+  [N, E, P, T,Twitter] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>,<<"twitter">>]),
+  lager:warning("creating a guy: ~p ~p ~p ~p ~p ~n", [N, E, P, T,Twitter]),
+  case ping_user_db:create(N, E, P, T,Twitter) of
     {ok, Uid} ->
       ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
       Response = "{status: ok}, {response: {id:" ++ integer_to_list(Uid) ++ "}",
@@ -104,7 +104,8 @@ handle_pinger(true, 'PUT', _Args, Req, Session) ->
   UserId = proplists:get_value(uid, Session),
   FrequencyMs = list_to_integer(Frequency) * 1000,
   case ping_pinger_db:create(Name2, Type, UserId, Endpoint, FrequencyMs, Data) of
-    {ok, Id} -> ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,FrequencyMs,Data}),
+    {ok, Id} -> 
+      ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,FrequencyMs,Data}),
       [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
   end;
