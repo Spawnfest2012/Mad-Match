@@ -3,6 +3,7 @@
 -include("records.hrl").
 %-callback handle_ping(Pinger :: #pinger{}) -> up|down.
 
+-define(NOTIFICATION_TIME, 60000). % 1 min
 
 -export([start_link/1]).
 -export([behaviour_info/1]).
@@ -10,7 +11,9 @@
 
 -record(state, {
     pinger :: #pinger{},
-    down_since :: term()
+    down_since = undefined :: pos_integer(),
+    last_notification_time = 0 :: pos_integer(), 
+    notify_up = false :: boolean()
     }).
 
 -define(GET_MODULE(S), case S#state.pinger#pinger.type of
@@ -30,6 +33,7 @@ start_link(Pinger) ->
 
 init(Pinger) ->
   lager:info("Init"),
+  ping_pinger_db:update(Pinger#pinger.id,[{last_status,up}]),
   {ok, up, #state{pinger = Pinger}, Pinger#pinger.frequency}.
 
 up(timeout, State) ->
@@ -37,11 +41,13 @@ up(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     down ->
-      {next_state, NextState,
-       State#state{down_since = ping_utils:now()},
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,down},{last_check,ping_utils:now()}]),
+      {next_state, down,
+       %% I'm setting the last_notification_time, I know it's odd.
+       State#state{down_since = ping_utils:now(),last_notification_time = ping_utils:now()},
        erlang:trunc(((State#state.pinger)#pinger.frequency) / 10)};
     up ->
-      {next_state, NextState, State, (State#state.pinger)#pinger.frequency}
+      {next_state, up, State, (State#state.pinger)#pinger.frequency}
   end.
 
 down(timeout, State) ->
@@ -49,11 +55,26 @@ down(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     up ->
-      {next_state, NextState,
-       State#state{down_since = undefined},
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,up},{last_check,ping_utils:now()}]),
+      Event = #event{type = pinger_up,pinger = State#state.pinger},
+      case State#state.notify_up of
+        true  -> ping_notifier:notify(Event);
+        false -> ok
+      end,
+      {next_state, up,
+       State#state{down_since = undefined, notify_up = false},
        State#state.pinger#pinger.frequency};
     down ->
-      {next_state, NextState, State, erlang:trunc(((State#state.pinger)#pinger.frequency) / 10)}
+      NewState = case ?NOTIFICATION_TIME =< (ping_utils:now() - State#state.last_notification_time) of
+        true  -> 
+          Event = #event{type = pinger_down,pinger = State#state.pinger, down_time=(ping_utils:now()-State#state.down_since)},
+          ping_notifier:notify(Event),
+          State#state{last_notification_time = ping_utils:now(), notify_up = true};
+        false -> 
+          State
+      end,
+      
+      {next_state, down, NewState, erlang:trunc(((State#state.pinger)#pinger.frequency) / 10)}
   end.
 
 stop(Id) ->

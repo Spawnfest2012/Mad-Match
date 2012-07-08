@@ -3,9 +3,9 @@
                  type :: ping|dns|http,
                  user_id :: pos_integer(),
                  end_point :: string(),
-                 frequency :: pos_integer(),
+                 frequency :: pos_integer(), %% milliseconds
                  last_status :: up | down, 
-                 last_check :: pos_integer(),
+                 last_check = 0 :: pos_integer(), %% milliseconds
                  data = [] :: list(), % local data to extend pinger basic info
                  created_at :: term()
                 }).
@@ -13,12 +13,15 @@
                        type           :: email | twitter,
                        user_id        :: pos_integer(),
                        pinger_id      :: pos_integer(),
-                       down_time      :: pos_integer(),
+                       down_time      :: pos_integer(), %% milliseconds
+                       notification_delay :: pos_integer(), %% milliseconds
+                       last_notification = 0 :: pos_integer(), %% milliseconds
                        notify_when_up :: boolean(),
                        created_at :: term()}).
 -record(event,{ type      :: pinger_down | pinger_up,
                 pinger    :: #pinger{},
-                down_time :: pos_integer()}).
+                 down_time :: pos_integer() %% milliseconds
+              }).
 
 
 -record(user, {id :: pos_integer(),
