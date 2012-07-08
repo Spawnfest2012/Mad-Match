@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1, create/5, delete/1,all/1]).
+-export([find/1, create/6, delete/1,all/1]).
 
 -spec find(pos_integer()) -> notfound | #subscription{}.
 find(Id) ->
@@ -12,14 +12,15 @@ find(Id) ->
   [Subscription|[]] = emysql_util:as_record( Result, subscription, record_info(fields, subscription)),
   Subscription.
 
--spec create(string(),pos_integer(),pos_integer(),pos_integer(),boolean()) -> {ok,pos_integer()}.
-create(Type, UserId, PingerId, DownTime, NotifyWhenUp) ->
+-spec create(string(),pos_integer(),pos_integer(),pos_integer(),boolean(),pos_integer()) -> {ok,pos_integer()}.
+create(Type, UserId, PingerId, DownTime, NotifyWhenUp,NotificationDelay) ->
   ping_db:create(?SUBSCRIPTION_TABLE, [
       {type, Type},
       {user_id, UserId},
       {pinger_id, PingerId},
       {down_time, DownTime},
-      {notify_when_up, NotifyWhenUp}]).
+      {notify_when_up, NotifyWhenUp},
+      {notification_delay,NotificationDelay}]).
 
 -spec all(list()) -> [#user{}].
 all(Options) -> 

@@ -33,7 +33,7 @@ start_link(Pinger) ->
 
 init(Pinger) ->
   lager:info("Init"),
-  ping_pinger_db:update(Pinger#pinger.id,[{last_status,up}]),
+  ping_pinger_db:update(Pinger#pinger.id,[{last_status,"up"}]),
   {ok, up, #state{pinger = Pinger}, Pinger#pinger.frequency}.
 
 up(timeout, State) ->
@@ -41,7 +41,7 @@ up(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     down ->
-      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,down},{last_check,ping_utils:now()}]),
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"down"},{last_check,ping_utils:now()}]),
       {next_state, down,
        %% I'm setting the last_notification_time, I know it's odd.
        State#state{down_since = ping_utils:now(),last_notification_time = ping_utils:now()},
@@ -55,7 +55,7 @@ down(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     up ->
-      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,up},{last_check,ping_utils:now()}]),
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"up"},{last_check,ping_utils:now()}]),
       Event = #event{type = pinger_up,pinger = State#state.pinger},
       case State#state.notify_up of
         true  -> ping_notifier:notify(Event);
@@ -71,6 +71,7 @@ down(timeout, State) ->
           ping_notifier:notify(Event),
           State#state{last_notification_time = ping_utils:now(), notify_up = true};
         false -> 
+          lager:info("without notification"),
           State
       end,
       

@@ -37,6 +37,8 @@ CREATE TABLE `subscriptions` (
  `pinger_id` INT NOT NULL ,
  `down_time` INT NOT NULL ,
  `notify_when_up` BOOL NOT NULL DEFAULT  '0',
+ `notification_delay` INT NOT NULL ,
+ `last_notification` INT NOT NULL DEFAULT  0 ,
  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;
 
