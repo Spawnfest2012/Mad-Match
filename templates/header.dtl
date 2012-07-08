@@ -1,4 +1,26 @@
 <script type=text/javascript>
+    var socket = new WebSocket("ws://localhost:4000/websocket");
+    socket.onmessage = function(message) {
+        data = JSON.parse(message.data);
+//        console.log(message);
+        pinger = $("#" + data.id);
+
+        image = pinger.find(" .pingowner");
+        if (data.status == "up") {
+            image.attr('src', "/images/ampelmann.png");
+            color = "green";
+        } else {
+            image.attr('src', "/images/ampelmann_down.png");
+            color = "red";
+        }
+
+        pinger.css("border-color",color);
+        setTimeout(function() {
+            pinger.css("border-color","#DDDDDD");
+        }, 3000);
+        pinger.find(" .conversation p span").text(data.message)
+    }
+
 jQuery(function($) {
 
   $(this).find("a#logout").click(function() {

@@ -70,7 +70,7 @@ jQuery(function($) {
                 <select name="web_status" id="web_status">
                     <option value="100">100 Continue </option>
                     <option value="101">101 Switching Protocols </option>
-                    <option value="200">200 OK </option>
+                    <option value="200" SELECTED >200 OK </option>
                     <option value="201">201 Created </option>
                     <option value="202">202 Accepted </option>
                     <option value="203">203 Non-authoritative Information </option>
