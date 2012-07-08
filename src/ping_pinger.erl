@@ -32,12 +32,10 @@ start_link(Pinger) ->
   gen_fsm:start_link({local, build_process_name(Pinger#pinger.id)}, ?MODULE, Pinger, []).
 
 init(Pinger) ->
-  lager:info("Init"),
-  ping_pinger_db:update(Pinger#pinger.id,[{last_status,"up"}]),
+  ping_pinger_db:update(Pinger#pinger.id,[{last_status,"up"},{last_check,ping_utils:now()}]),
   {ok, up, #state{pinger = Pinger}, Pinger#pinger.frequency}.
 
 up(timeout, State) ->
-  lager:info("UP"),
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     down ->
@@ -51,7 +49,6 @@ up(timeout, State) ->
   end.
 
 down(timeout, State) ->
-  lager:info("Down"),
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     up ->
@@ -71,7 +68,6 @@ down(timeout, State) ->
           ping_notifier:notify(Event),
           State#state{last_notification_time = ping_utils:now(), notify_up = true};
         false -> 
-          lager:info("without notification"),
           State
       end,
       

@@ -215,7 +215,7 @@ div#signup h1 {
 
 #signup input { 
 
-  margin:10px auto 10px auto;
+  margin:auto;
   z-index:auto;
   position:relative;
   display: block; 
@@ -232,12 +232,12 @@ div#signup h1 {
 
 #signup select {
   
-  margin:10px auto 10px auto;
+  margin:auto;
   z-index:auto;
   position:relative;
-  display: block; 
   width: 435px;
-  
+  display: block;
+  padding: 10px 14px 5px;
   font-size: 32px;
   font-weight: 300;
   background: transparent;
@@ -278,8 +278,7 @@ div#signup h1 {
   left:19%;
   font-size: 27px;
   font-weight: -10;
-  color: #000;
-  display:none;
+  color: #eee;
 
 }
 

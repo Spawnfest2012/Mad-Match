@@ -5,7 +5,6 @@
 -include("records.hrl").
 
 handle_ping(Pinger) ->
-  lager:info("ping_pinger_dns: Pinging"),
   case inet_res:gethostbyname(Pinger#pinger.end_point) of
     {ok, _} -> up;
     _       -> down

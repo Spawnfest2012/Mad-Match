@@ -57,6 +57,7 @@ jQuery(function($) {
   <ul class="menu">
       {% if is_logged_in %}
       <li><a href="/addping">Add</a></li>
+      <li><a href="/edit">Edit My Account</a></li>
       <li><a href="#" id="logout">Logout</a></li>
       {% else %}
       <li><a href="/login">Login</a></li>

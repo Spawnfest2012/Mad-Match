@@ -6,7 +6,6 @@
 
 -spec handle_ping(#pinger{}) -> up | down.
 handle_ping(Pinger) ->
-  lager:info("ping_pinger_ping: Pinging"),
   Host = Pinger#pinger.end_point,
   try
     case gen_icmp:ping(Host) of
