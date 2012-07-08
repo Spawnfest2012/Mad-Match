@@ -25,8 +25,8 @@ jQuery(function($) {
     
   });
 
-  $("#pinger").change(function() {
-    if ($("#pinger option:selected").val() == "http") {
+  $("#type").change(function() {
+    if ($("#type option:selected").val() == "http") {
         $(".webproto").show();
     }
     else {
@@ -49,14 +49,14 @@ jQuery(function($) {
             <label>Name</label>
             <div id="clear"></div>
 
-            <select id="pinger">
-                <option value="ping">Ping</option>
-                <option value="dns">DNS</option>
-                <option value="http">HTTP</option>
+            <select name="type" id="type">
+                <option name="ping" value="ping">Ping</option>
+                <option name="dns"  value="dns">DNS</option>
+                <option name="http" value="http">HTTP</option>
             </select>
             <div id="clear"></div>
 
-            <select>
+            <select name="frequency" id="frequency">
                 <option value="10">10 Seconds</option>
                 <option value="20">20 Seconds</option>
                 <option value="30">30 Seconds</option>
@@ -71,7 +71,7 @@ jQuery(function($) {
                 <label>Status</label>
                 <div id="clear"></div>
 
-                <select id="web_method">
+                <select name="web_method" id="web_method">
                     <option value="get">GET</option>
                     <option value="post">POST</option>
                     <option value="put">PUT</option>
