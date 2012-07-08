@@ -55,4 +55,4 @@ get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
 
 -spec update(pos_integer(),[{atom(),string()}]) -> ok|error.
 update(PingerId,Updates) ->
-  ping_db:update(?PINGER_TABLE, [{where,[id,PingerId]},{update,Updates}]).
+  ping_db:update(?PINGER_TABLE, [{where,[{id,PingerId}]},{update,Updates}]).
