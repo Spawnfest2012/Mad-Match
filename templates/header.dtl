@@ -57,7 +57,7 @@ jQuery(function($) {
 <div class="container_5">
 <div id="header">
   <div class="grid_3">
-  <div id="logo"><img src="/images/pingterest_small.png"></div>
+  <div id="logo"><a href='/'><img src="/images/pingterest_small.png"></a></div>
   </div>
   <div class="grid_2">
   <ul class="menu">

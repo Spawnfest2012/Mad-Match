@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1,create/6,all/1,get_subscriptions/4,delete/1,firehose/2,update/2]).
+-export([find/1,create/6,all/1,get_subscriptions/4,delete/1,firehose/2,update/2,find_all_by_user_id/1]).
 
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
@@ -29,7 +29,7 @@ Result = ping_db:find(?PINGER_TABLE,Options),
   emysql_util:as_record(
 		Result, pinger, record_info(fields, pinger)).
 
--spec firehose(pos_integer() | binary(),pos_integer()) -> [#user{}].
+-spec firehose(pos_integer() | binary(),pos_integer()) -> [#pinger{}].
 firehose(Page,PageSize) when is_binary(Page) ->
   firehose(ping_utils:binary_to_integer(Page),PageSize);
 firehose(Page,PageSize) -> 
@@ -41,6 +41,15 @@ firehose(Page,PageSize) ->
   Query = " SELECT p.*, u.name as user_name, u.tagline as user_tagline, count(s.id) as subscription_count FROM " ++ ?PINGER_TABLE ++ " p LEFT OUTER JOIN " ++ ?SUBSCRIPTION_TABLE ++ " s ON s.pinger_id = p.id INNER JOIN " ++ ?USER_TABLE ++ " u ON u.id = p.user_id GROUP BY p.id ORDER BY last_status DESC, subscription_count DESC LIMIT ?, ?",
   emysql:prepare(list_to_atom("firehose"),Query),
   Result = emysql:execute(ping_db,list_to_atom("firehose"),[Page2,PageSize]),
+  emysql_util:as_record(
+		Result, pinger, record_info(fields, pinger)).
+
+
+-spec find_all_by_user_id(pos_integer() | binary()) -> [#pinger{}].
+find_all_by_user_id(UserId) -> 
+  Query = " SELECT p.*, u.name as user_name, u.tagline as user_tagline, count(s.id) as subscription_count FROM " ++ ?PINGER_TABLE ++ " p LEFT OUTER JOIN " ++ ?SUBSCRIPTION_TABLE ++ " s ON s.pinger_id = p.id INNER JOIN " ++ ?USER_TABLE ++ " u ON u.id = p.user_id WHERE p.user_id = ? GROUP BY p.id ORDER BY last_status DESC, subscription_count DESC",
+  emysql:prepare(list_to_atom("find_all_by_user_id"),Query),
+  Result = emysql:execute(ping_db,list_to_atom("find_all_by_user_id"),[UserId]),
   emysql_util:as_record(
 		Result, pinger, record_info(fields, pinger)).
 
