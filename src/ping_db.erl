@@ -65,7 +65,6 @@ handle_call({create,Table,Fields}, _From, State) ->
   Parameters =  string:join(lists:map(fun({Key,_})-> atom_to_list(Key) ++ " = ?" end,Fields),", "),
   Values =lists:map(fun({_,Value})-> Value end,Fields),
   Query = list_to_binary("INSERT INTO " ++ Table ++ " SET " ++ Parameters ++ " "),
-  lager:info("Query: ~p\nValues: ~p", [Query, Values]),
   emysql:prepare(list_to_atom("create_" ++Table), Query),
   Reply = case emysql:execute(?MODULE,list_to_atom("create_" ++Table),Values) of
     {ok_packet,_,_,Id,_,_,_}          -> {ok,Id};
@@ -80,10 +79,8 @@ handle_call({find,Table,Options}, _From, State) ->
   {reply, Result, State};
 handle_call({delete,Table,Options}, _From, State) ->
   Query = list_to_binary("DELETE FROM " ++ Table ++ add_options(Options)),
-  lager:info("Query ~p",[Query]),
   emysql:prepare(list_to_atom("delete_" ++Table),Query),
   Values = get_values(Options),
-  lager:info("Values ~p",[Values]),
   Reply = case emysql:execute(?MODULE,list_to_atom("delete_" ++Table),Values) of
     {ok_packet,_,Rows,_,_,_,_}          -> Rows;
     {error_packet, _, _, _, Msg} -> {error, Msg}
@@ -91,6 +88,7 @@ handle_call({delete,Table,Options}, _From, State) ->
   {reply, Reply, State};
 handle_call({update,Table,Options}, _From, State) ->
   Query = list_to_binary("UPDATE " ++ Table ++ " set " ++ add_options(Options)),
+  lager:warning("query is ~p ~n",[Query]),
   emysql:prepare(list_to_atom("update_" ++Table),Query),
   Values = get_values(Options),
   Result = case emysql:execute(?MODULE,list_to_atom("update_" ++Table),Values) of
@@ -168,7 +166,6 @@ add_option({update,Updates}) ->
 get_values([]) ->
   [];
 get_values(Options) ->
-  lager:info("~p~n",[Options]),
   get_value(lists:keyfind(update,1,Options)) ++
   get_value(lists:keyfind(where,1,Options)).
 

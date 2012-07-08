@@ -37,7 +37,7 @@ send_message({Host, Port}, {SrcName, SrcAddr, SrcPwd}, Recipients, Subject, Body
     ok = send(Socket, "."),
     ok = send(Socket, "QUIT"),
     ssl:close(Socket),
-    lager:info("Mail sent from ~s <~s> to ~p~n", [SrcName, SrcAddr, Recipients])
+    lager:debug("Mail sent from ~s <~s> to ~p~n", [SrcName, SrcAddr, Recipients])
   catch
     _:Error ->
       lager:warning("Could not send from ~s <~s> to ~p~n\tError: ~p~n", [SrcName, SrcAddr, Recipients, Error]),

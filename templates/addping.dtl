@@ -39,14 +39,14 @@ jQuery(function($) {
 </script>
 <div id="signup">
     <div id="signup_header">
-        <img src="/images/pingterest_small.png"/>
+      {% include "logo.dtl" %}
     </div>
     <h1>Add your Pingterest</h1>
     <div id="signup_form">
         <form id="theform">
 
 
-            <input type="text" id="endpoint" name="endpoint" class="">
+            <input type="text" id="endpoint" name="endpoint" placeholder="Server URL/IP">
             <label class="slightly_smaller">Server URL/IP</label>
             <div id="clear"></div>
 
@@ -121,11 +121,11 @@ jQuery(function($) {
                 <div id="clear"></div>
             </div>
 
-            <input type="text" id="name" name="name" class="">
+            <input type="text" id="name" name="name" placeholder="Optional Label">
             <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
-            <input type="text" id="pic_url" name="pic_url" value="http://" class="">
+            <input type="text" id="pic_url" name="pic_url" value="http://"  placeholder="Pic Url">
             <label class="slightly_smaller">Pic Url</label>
             <div id="clear"></div>
 

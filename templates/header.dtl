@@ -74,10 +74,13 @@ jQuery(function($) {
 });
 </script>
 <div id="header">
-  <div id="logo"><img src="/images/pingterest_small.png"></div>
+  <div id="logo">{% include "logo.dtl" %}</div>
+
+  
   <ul class="menu">
       {% if is_logged_in %}
       <li><a href="/addping">Add</a></li>
+      <li><a href="/edit">Edit My Account</a></li>
       <li><a href="#" id="logout">Logout</a></li>
       {% else %}
       <li><a href="/login">Login</a></li>

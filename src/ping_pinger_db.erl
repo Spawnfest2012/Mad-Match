@@ -15,11 +15,10 @@ find(Id) ->
 -spec create(string(),string(),pos_integer(),string(),pos_integer(),string(),string()) -> integer().
 create(Name,Type,UserId,EndPoint,Frequency, Data, PicUrl) ->
   JsonData = jsx:encode(Data),
-  ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
+  ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,fix_end_point(EndPoint)},{frequency,Frequency},
     {data,JsonData},{last_status,"down"},{pic_url,PicUrl}]).
 
 delete(Id) ->
-  lager:info("Id ~p\n", [Id]),
   ping_db:delete(?PINGER_TABLE,[{where,[{id,Id}]}]).
 
 -spec all(list()) -> [#user{}].
@@ -61,7 +60,6 @@ get_subscriptions(Type,PingerId,pinger_down,DownTime) ->
           "' AND s.pinger_id = "++integer_to_list(PingerId)++
           " AND s.down_time <= "++integer_to_list(DownTime)++
           " AND s.last_notification < ("++Now++" - s.notification_delay)" ,
-  lager:info(Query),
   R = ping_db:execute(list_to_binary(Query)),
   lists:flatten(R#result_packet.rows);
 get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
@@ -72,3 +70,14 @@ get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
 -spec update(pos_integer(),[{atom(),string()}]) -> ok|error.
 update(PingerId,Updates) ->
   ping_db:update(?PINGER_TABLE, [{where,[{id,PingerId}]},{update,Updates}]).
+
+-spec fix_end_point(list()|binary()) -> list().
+fix_end_point(Input) when is_binary(Input) ->
+  fix_end_point(binary_to_list(Input));
+fix_end_point([]) -> [];
+fix_end_point(Input) ->
+  E = string:strip(Input),
+  case string:str(E, "http://") of
+    1 -> E;
+    _ -> "http://"++E
+  end.

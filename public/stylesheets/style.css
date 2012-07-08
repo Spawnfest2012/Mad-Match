@@ -169,17 +169,15 @@ display: block;
 
 div#header a
 {
-color: #222;
-display: inline-block;
-font-family: 'helvetica neue', arial, sans-serif;
-font-size: 13px;
-font-weight: bold;
-height: 29px;
-padding: 15px 27px 0px 10px;
-position: relative;
-text-align: -webkit-auto;
-text-decoration: none;
-width: 50px;
+  color: #222;
+  display: inline-block;
+  font-family: 'helvetica neue', arial, sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  height: 29px;
+  position: relative;
+  text-align: -webkit-auto;
+  text-decoration: none;
 
 }
 
@@ -190,24 +188,12 @@ ul.menu {
 ul.menu li {
   position:relative;
   float:left;
-  width:88px;
   border-left:1px white;
   font-size:11px;
+  padding: 15px 27px 0px 10px;
 }
 
 /* signup/login stuff */
-#signup input {
-  width: 435px;
-  padding: 10px 14px 5px;
-  font-size: 32px;
-  font-weight: 300;
-  background: transparent;
-  border: 1px solid #a4a2a2;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-}
-
 div#signup
 {
   left:40%;
@@ -223,27 +209,31 @@ div#signup h1 {
   text-align:center;
   display:block;
   margin:auto;
+  padding:10px 0 0 0;
 }
-
 
 #signup input { 
 
-  margin:auto;
-  display: inline-block; 
+  margin:0 auto 10px auto;
   z-index:auto;
-  left: 30%;
   position:relative;
-  margin: 1px 0px 5px 0px;
+  display: block; 
+  width: 435px;
+  padding: 10px 14px 5px;
+  font-size: 32px;
+  font-weight: 300;
+  border: 1px solid #a4a2a2;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+
 }
 
 #signup select {
   
-  margin:auto;
-  display: inline-block; 
+  margin:0 auto 10px auto;
   z-index:auto;
-  left: 405px;
   position:relative;
-  margin: 1px 0px 5px 0px;
   width: 435px;
   display: block;
   padding: 10px 14px 5px;
@@ -259,9 +249,10 @@ div#signup h1 {
 
 #signup a.button {
 
-  display: inline-block; 
+  margin:auto;
+  width:200px;
+  display: block; 
   position:relative;
-  left:32%;
   padding: 0.625em 1em; 
   font-size: 24px;
   line-height: 1em;
@@ -271,6 +262,25 @@ div#signup h1 {
   text-decoration:none;
   -moz-border-radius: 5px;
   border-radius: 5px;
+  
+}
+
+#signup a.button2 {
+
+  margin:auto;
+  width:350px;
+  display: block; 
+  position:relative;
+  padding: 0.625em 1em; 
+  font-size: 24px;
+  line-height: 1em;
+  color: #111;
+  background-color: #f3f3f3;
+  border: 1px solid #e7e7e7;
+  text-decoration:none;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  text-align:center;
   
 }
 
@@ -288,6 +298,7 @@ div#signup h1 {
   font-size: 27px;
   font-weight: -10;
   color: #eee;
+  display:none;
 
 }
 
@@ -375,7 +386,7 @@ overflow: hidden;
 .pinger div.conversation
 {
   margin: 0 -15px;
-  padding: 2px 10px 7px 14px;
+  padding: 2px 10px 17px 14px;
   background-color: #F2F0F0;
   
 }
