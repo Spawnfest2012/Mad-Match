@@ -74,7 +74,7 @@ jQuery(function($) {
 
 {% include "pingboard.dtl" %}
 <nav id="page-nav">
-  <a href="../pages/2.html"></a>
+  <a href="/reel?page=2"></a>
 </nav>
 </div>
 
