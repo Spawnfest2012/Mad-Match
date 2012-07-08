@@ -10,7 +10,8 @@
                  subscription_count :: pos_integer(),
                  user_name :: string(),
                  user_tagline :: string(),
-                 created_at :: term()
+                 created_at :: term(),
+                 pic_url :: string()
                 }).
 -record(subscription,{ id             :: pos_integer(),
                        type           :: email | twitter,
