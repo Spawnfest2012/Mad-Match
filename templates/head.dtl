@@ -9,4 +9,5 @@
   <script src="/javascripts/jquery.placeholder.js"></script>
   <script src="/javascripts/modernizr-transitions.js"></script>
   <script src="/javascripts/jquery.infinitescroll.min.js"></script>
+  <script src="/javascripts/googlemap.js"></script>
   </head>
