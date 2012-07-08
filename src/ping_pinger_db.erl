@@ -15,7 +15,6 @@ find(Id) ->
 -spec create(string(),string(),pos_integer(),string(),pos_integer(),string()) -> integer().
 create(Name,Type,UserId,EndPoint,Frequency, Data) ->
   JsonData = jsx:encode(Data),
-  lager:info(">>>>>> ~p ~p ~p ~p ~p ~p\n", [Name, Type, UserId, EndPoint, Frequency, JsonData]),
   ping_db:create(?PINGER_TABLE,[{name,Name},{type,Type},{user_id,integer_to_list(UserId)},{end_point,EndPoint},{frequency,Frequency},
     {data,JsonData},{last_status,"down"}]).
 
@@ -56,7 +55,7 @@ find_all_by_user_id(UserId) ->
 
 -spec get_subscriptions(atom(),pos_integer(),pinger_down|pinger_up,undefined|pos_integer()) -> [string()].
 get_subscriptions(Type,PingerId,pinger_down,DownTime) ->
-  Now = ping_utils:now(),
+  Now = integer_to_list(ping_utils:now()),
   Query = "SELECT u."++atom_to_list(Type)++
           " FROM users u,subscriptions s WHERE u.id = s.user_id AND s.type = '"++atom_to_list(Type)++
           "' AND s.pinger_id = "++integer_to_list(PingerId)++
@@ -72,4 +71,4 @@ get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
 
 -spec update(pos_integer(),[{atom(),string()}]) -> ok|error.
 update(PingerId,Updates) ->
-  ping_db:update(?PINGER_TABLE, [{where,[id,PingerId]},{update,Updates}]).
+  ping_db:update(?PINGER_TABLE, [{where,[{id,PingerId}]},{update,Updates}]).
