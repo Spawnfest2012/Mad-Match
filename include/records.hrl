@@ -7,6 +7,7 @@
                  last_status :: up | down, 
                  last_check :: pos_integer(),
                  data = [] :: list(), % local data to extend pinger basic info
+                 subscription_count :: pos_integer(),
                  created_at :: term()
                 }).
 -record(subscription,{ id             :: pos_integer(),

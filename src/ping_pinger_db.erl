@@ -4,7 +4,7 @@
 -include("defaults.hrl").
 -include_lib("deps/emysql/include/emysql.hrl").
 
--export([find/1,create/6,all/1,get_subscriptions/4,delete/1]).
+-export([find/1,create/6,all/1,get_subscriptions/4,delete/1,firehose/2]).
 
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
@@ -28,6 +28,15 @@ all(Options) ->
 Result = ping_db:find(?PINGER_TABLE,Options),
   emysql_util:as_record(
 		Result, pinger, record_info(fields, pinger)).
+
+-spec firehose(pos_integer(),pos_integer()) -> [#user{}].
+firehose(Page,PageSize) -> 
+  Query = " SELECT p.*, count(s.id) as subscription_count FROM " ++ ?PINGER_TABLE ++ " p LEFT OUTER JOIN " ++ ?SUBSCRIPTION_TABLE ++ " s ON s.pinger_id = p.id GROUP BY p.id ORDER BY last_status DESC, subscription_count DESC LIMIT ?, ?",
+  emysql:prepare(list_to_atom("firehose"),Query),
+  Result = emysql:execute(ping_db,list_to_atom("firehose"),[Page,PageSize]),
+  emysql_util:as_record(
+		Result, pinger, record_info(fields, pinger)).
+
 
 get_subscriptions(Type,PingerId,pinger_down,DownTime) ->
   Query = "SELECT u."++atom_to_list(Type)++" FROM users u,subscriptions s WHERE u.id = s.user_id AND s.type = '"++atom_to_list(Type)++"' AND s.pinger_id = "++integer_to_list(PingerId)++" AND s.down_time <= "++integer_to_list(DownTime),
