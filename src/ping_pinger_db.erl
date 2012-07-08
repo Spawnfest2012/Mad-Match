@@ -9,7 +9,7 @@
 -spec find(pos_integer()) -> notfound | #pinger{}.
 find(Id) ->
   Result = ping_db:find(?PINGER_TABLE,[{where,[{id,integer_to_list(Id)}]}]),
-  [Pinger|[]] = emysql_util:as_record( Result, pinger, record_info(fields, pinger)),
+  [Pinger|[]] = emysql_util:as_record( Result, pinger, record_info(fields, pinger), fun ping_utils:as_record/1),
   Pinger.
 
 -spec create(string(),string(),pos_integer(),string(),pos_integer(),string()) -> integer().
@@ -26,7 +26,7 @@ delete(Id) ->
 all(Options) -> 
 Result = ping_db:find(?PINGER_TABLE,Options),
   emysql_util:as_record(
-		Result, pinger, record_info(fields, pinger)).
+		Result, pinger, record_info(fields, pinger), fun ping_utils:as_record/1).
 
 -spec firehose(pos_integer(),pos_integer()) -> [#user{}].
 firehose(Page,PageSize) -> 
@@ -55,4 +55,4 @@ get_subscriptions(Type,PingerId,pinger_up,_DownTime) ->
 
 -spec update(pos_integer(),[{atom(),string()}]) -> ok|error.
 update(PingerId,Updates) ->
-  ping_db:update(?PINGER_TABLE, [{where,[id,PingerId]},{update,Updates}]).
+  ping_db:update(?PINGER_TABLE, [{where,[{id,PingerId}]},{update,Updates}]).
