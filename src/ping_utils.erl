@@ -6,7 +6,7 @@
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_binary_to_list/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
-         random_string/1,seed/0]).
+         random_string/1,seed/0,as_record/1]).
 
 -export([pad_to16/1]).
 -export([first/3]).
@@ -226,10 +226,29 @@ seed() ->
 
   lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency,Data})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,Data) end, Pingers),
 
-  Subscriptions = [{"email", Uid1, 1, 60000, 1},{"email", Uid2, 2, 60000, 1},{"email", Uid3, 3, 60000, 1},{"email", Uid4, 4, 60000, 1}],
+  Subscriptions = [
+  			{"email", Uid1, 1, 60000, 1, 30000},
+  			{"email", Uid2, 2, 60000, 1, 30000},
+  			{"email", Uid3, 3, 60000, 1, 30000},
+  			{"email", Uid4, 4, 60000, 1, 30000}],
 
-  lists:foreach(fun({Type, UserId, PingerId, DownTime, NotifyWhenUp})-> ping_subscription_db:create(Type, UserId, PingerId, DownTime, NotifyWhenUp) end, Subscriptions),
+  lists:foreach(fun({Type, UserId, PingerId, DownTime, NotifyWhenUp, Delay})-> ping_subscription_db:create(Type, UserId, PingerId, DownTime, NotifyWhenUp, Delay) end, Subscriptions),
   
 
   ok.
 
+-spec as_record(#pinger{}) -> #pinger{}.
+as_record(Pinger = #pinger{type=BinType, last_status=BinLastStatus, name=BinName, end_point=BinEndPoint}) ->
+  LastStatus = case BinLastStatus of
+                 B when is_binary(B) -> binary_to_atom(B, utf8);
+                 undefined -> undefined
+               end,
+  Name = case BinName of
+                 BN when is_binary(BN) -> binary_to_list(BN);
+                 BinName -> BinName
+               end,
+  EndPoint = case BinEndPoint of
+               BE when is_binary(BE) -> binary_to_list(BE);
+               BinEndPoint -> BinEndPoint
+             end,
+  Pinger#pinger{type = binary_to_atom(BinType, utf8), last_status= LastStatus, name=Name, end_point=EndPoint}.

@@ -6,6 +6,8 @@
 -define(OK, [200, <<"ok">>]).
 -define(CREATED, [201, <<"ok">>]).
 
+-define(STRING_TO_MS(S), list_to_integer(S) * 1000).
+
 -include("records.hrl").
 
 %%
@@ -51,9 +53,9 @@ get_parameter(Key, Qs) ->
 
 handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  [N, E, P, T] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>]),
-  lager:warning("creating a guy: ~p ~p ~p ~p ~n", [N, E, P, T]),
-  case ping_user_db:create(N, E, P, T) of
+  [N, E, P, T,Twitter] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>,<<"twitter">>]),
+  lager:warning("creating a guy: ~p ~p ~p ~p ~p ~n", [N, E, P, T,Twitter]),
+  case ping_user_db:create(N, E, P, T,Twitter) of
     {ok, Uid} ->
       ping_session:save_session(lists:keystore(uid,1,Session,{uid,Uid})),
       Response = "{status: ok}, {response: {id:" ++ integer_to_list(Uid) ++ "}",
@@ -88,7 +90,6 @@ handle_logout(_, _, _, _) ->
 
 handle_pinger(true, 'PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  lager:info("Qs: ~p\n", [Qs]),
   [Name, Type, Endpoint, Frequency] = get_parameters(Qs, [<<"name">>, <<"type">>, <<"endpoint">>, <<"frequency">>]),
   Name2 = case Name of
     [] -> Endpoint;
@@ -102,9 +103,12 @@ handle_pinger(true, 'PUT', _Args, Req, Session) ->
   end,
   lager:info("Data: ~p\n", [Data]),
   UserId = proplists:get_value(uid, Session),
-  FrequencyMs = list_to_integer(Frequency) * 1000,
+  FrequencyMs = ?STRING_TO_MS(Frequency),
   case ping_pinger_db:create(Name2, Type, UserId, Endpoint, FrequencyMs, Data) of
-    {ok, Id} -> ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,FrequencyMs,Data}),
+    {ok, Id} ->
+      % Subscribe creator user
+      ping_subscription_db:create("email", UserId, Id, FrequencyMs, "on", FrequencyMs),
+      ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,FrequencyMs,Data}),
       [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
   end;
@@ -124,12 +128,12 @@ handle_pinger(_, _, _, _, _) ->
 
 handle_subscription('PUT', _Args, Req) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  [T, U, P, D, N] = get_parameters(Qs, [<<"type">>, <<"user_id">>, <<"pinger_id">>, <<"down_time">>, <<"notify_when_up">>]),
-  Notify = case N of
+  [T, U, P, DT, Delay, N] = get_parameters(Qs, [<<"type">>, <<"user_id">>, <<"pinger_id">>, <<"down_time">>, <<"notification_delay">>, <<"notify_when_up">>]),
+  NotifyWhenUp = case N of
     "on" -> "1";
     _ -> "0"
   end,
-  case ping_subscription_db:create(T, U, P, D, Notify) of
+  case ping_subscription_db:create(T, U, P, ?STRING_TO_MS(DT) * 60, NotifyWhenUp, ?STRING_TO_MS(Delay) * 60) of
     {ok, Id} ->
       Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
       [201, Response];
