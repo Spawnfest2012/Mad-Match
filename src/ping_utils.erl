@@ -273,25 +273,10 @@ seed() ->
   {ok,Uid5} = ping_user_db:create("google.com","google@google.com","google","Search Engine Giant", "@google"),
 
   Pingers = [{"Google DNS","ping",Uid5,"8.8.8.8",120000,[], "Mountain View, California"},
-    {"Prod3","ping",Uid2,"prod3.whisper.sh",120000,[], "New York, NY"},
-    {"Prod4","ping",Uid3,"prod4.whisper.sh",120000,[], "New York, NY"},
-    {"Prod5","ping",Uid4,"prod5.whisper.sh",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"}
+    {"Inaka","ping",Uid1,"inaka.net",120000,[], "USA"},
+    {"Inaka","http",Uid2,"http://inaka.net",120000,[], "USA"},
+    {"Twitter Api","http",Uid3,"http://twitter.com",120000,[], "New York, NY"},
+    {"Facebook Graph Api","http",Uid4,"http://graph.facebook.com/manuele.gomezc",120000,[], "New York, NY"}
   ],
 
 
