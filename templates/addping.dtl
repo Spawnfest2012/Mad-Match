@@ -46,7 +46,7 @@ jQuery(function($) {
         <form id="theform">
 
 
-            <input type="text" id="endpoint" name="endpoint" class="">
+            <input type="text" id="endpoint" name="endpoint" placeholder="Server URL/IP">
             <label class="slightly_smaller">Server URL/IP</label>
             <div id="clear"></div>
 
@@ -67,7 +67,7 @@ jQuery(function($) {
             <div id="clear"></div>
 
             <div class="webproto" style="display:none">
-                <input type="text" id="web_status" name="web_status" class="">
+                <input type="text" id="web_status" name="web_status" placeholder="Status">
                 <label>Status</label>
                 <div id="clear"></div>
 
@@ -80,11 +80,11 @@ jQuery(function($) {
                 <div id="clear"></div>
             </div>
 
-            <input type="text" id="name" name="name" class="">
+            <input type="text" id="name" name="name" placeholder="Optional Label">
             <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
-            <input type="text" id="pic_url" name="pic_url" value="http://" class="">
+            <input type="text" id="pic_url" name="pic_url" value="http://"  placeholder="Pic Url">
             <label class="slightly_smaller">Pic Url</label>
             <div id="clear"></div>
 

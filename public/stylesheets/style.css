@@ -196,18 +196,6 @@ ul.menu li {
 }
 
 /* signup/login stuff */
-#signup input {
-  width: 435px;
-  padding: 10px 14px 5px;
-  font-size: 32px;
-  font-weight: 300;
-  background: transparent;
-  border: 1px solid #a4a2a2;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-}
-
 div#signup
 {
   left:40%;
@@ -225,28 +213,31 @@ div#signup h1 {
   margin:auto;
 }
 
-
 #signup input { 
 
-  margin:auto;
-  display: inline-block; 
+  margin:10px auto 10px auto;
   z-index:auto;
-  left: 30%;
   position:relative;
-  margin: 1px 0px 5px 0px;
+  display: block; 
+  width: 435px;
+  padding: 10px 14px 5px;
+  font-size: 32px;
+  font-weight: 300;
+  border: 1px solid #a4a2a2;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+
 }
 
 #signup select {
   
-  margin:auto;
-  display: inline-block; 
+  margin:10px auto 10px auto;
   z-index:auto;
-  left: 405px;
   position:relative;
-  margin: 1px 0px 5px 0px;
+  display: block; 
   width: 435px;
-  display: block;
-  padding: 10px 14px 5px;
+  
   font-size: 32px;
   font-weight: 300;
   background: transparent;
@@ -287,7 +278,8 @@ div#signup h1 {
   left:19%;
   font-size: 27px;
   font-weight: -10;
-  color: #eee;
+  color: #000;
+  display:none;
 
 }
 
