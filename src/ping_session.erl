@@ -18,7 +18,7 @@
   }).
 
 -define(SESSION_SIZE, 30).
--define(SESSION_TIMEOUT, 5).
+-define(SESSION_TIMEOUT, 10000). %% time in seconds
 -define(NOW, calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:now()))).
 -define(NEXT_SESSION_TIMEOUT, ?SESSION_TIMEOUT + ?NOW).
 -define(PINGTEREST_SESSION, <<"pingterest_session">>).

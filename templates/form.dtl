@@ -1,0 +1,20 @@
+<div id="signup_form">
+<form id="theform">
+<input type="text" id="name" name="name" class="">
+<label>Name</label>
+<div id="clear"/>
+<input type="text" id="email" name="email" class="">
+<label>Email</label>
+<div id="clear"/>
+<input type="text" id="password" name="password" class="">
+<label class="lefter">Password</label>
+<div id="clear"/>
+<input type="text" id="tagline" name="tagline" class="">
+<label>Tagline</label>
+<div id="clear"/>
+
+<a href="#" class="button">
+I'm pingterested, sign me up!
+</a>
+</form>
+</div>
