@@ -64,6 +64,8 @@ jQuery(function($) {
       {% endif %}
   </ul>
 </div>
+
+{% if not is_logged_in %}
 <div id="welcome">
     <div class="links">
         <a href="/signup" class="sheetsignup"> Sign Up &raquo;</a>
@@ -74,6 +76,7 @@ jQuery(function($) {
       Keep track of the servers and ports you love.
     </p>
 </div>
+{% endif %}
 <div class="container">
   {% include "pingboard.dtl" %}
   <nav id="page-nav">
