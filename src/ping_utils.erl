@@ -4,7 +4,7 @@
 -include("records.hrl").
 
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
-         make_pairs/1, safe_term_to_binary/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
+         make_pairs/1, safe_term_to_binary/1, safe_binary_to_list/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
          now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
          random_string/1,seed/0,as_record/1]).
 
@@ -55,6 +55,9 @@ safe_term_to_binary(A) when is_atom(A) ->
   list_to_binary(atom_to_list(A));
 
 safe_term_to_binary(A) when is_binary(A) -> A.
+
+safe_binary_to_list(V) when is_binary(V) -> binary_to_list(V);
+safe_binary_to_list(V) -> V.
 
 -spec iso8601() -> string().
 iso8601() ->
