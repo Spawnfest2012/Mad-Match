@@ -203,11 +203,11 @@ seed() ->
 
   {ok,Uid} = ping_user_db:create("Master Pinger","alerts@pingtere.sh","nopingforyou",""),
 
-  Apps = [{"Prod1","ping",Uid,"prod1.whisper.sh",60000},
-          {"Prod3","ping",Uid,"prod3.whisper.sh",60000},
-          {"Prod4","ping",Uid,"prod4.whisper.sh",60000},
-          {"Prod5","ping",Uid,"prod5.whisper.sh",60000},
-          {"Mtv","ping",Uid,"mtv.inakalabs.com",60000}],
-  lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency) end, Apps),
+  Apps = [{"Prod1","ping",Uid,"prod1.whisper.sh",60000,""},
+          {"Prod3","ping",Uid,"prod3.whisper.sh",60000,""},
+          {"Prod4","ping",Uid,"prod4.whisper.sh",60000,""},
+          {"Prod5","ping",Uid,"prod5.whisper.sh",60000,""},
+          {"Mtv","ping",Uid,"mtv.inakalabs.com",60000 ,""}],
+  lists:foreach(fun({Name,Type,UserId,EndPoint,Frequency,Data})-> ping_pinger_db:create(Name,Type,UserId,EndPoint,Frequency,Data) end, Apps),
   ok.
 
