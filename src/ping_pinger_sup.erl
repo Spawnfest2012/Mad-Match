@@ -1,6 +1,7 @@
 -module(ping_pinger_sup).
 
 -define(MANAGERS, 400). %%NOTE: To reduce message_queue_lens on massive user initialization
+-include("records.hrl").
 
 -behaviour(supervisor).
 
@@ -15,9 +16,11 @@ start_link() ->
   supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% @doc  Starts a new client process
--spec start_pinger([proplists:property()]) -> {ok, pid()} | {error, term()}.
-start_pinger(Pinger) ->
+-spec start_pinger(tuple()) -> {ok, pid()} | {error, term()}.
+start_pinger({Id,Name,Type,UserId,EndPoint,Frequency,Data}) ->
   _ = random:seed(erlang:now()),
+  
+  Pinger = #pinger{id=Id,name=Name,type=Type,user_id=UserId,end_point=EndPoint,frequency=Frequency,data=Data},
   Manager =
     list_to_atom("ping-pinger-manager-" ++ integer_to_list(random:uniform(?MANAGERS))),
   supervisor:start_child(Manager, [Pinger]).

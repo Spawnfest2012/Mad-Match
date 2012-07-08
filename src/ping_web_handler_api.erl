@@ -107,7 +107,8 @@ handle_pinger(true, 'PUT', _Args, Req, Session) ->
   lager:info("Data: ~p\n", [Data]),
   UserId = proplists:get_value(uid, Session),
   case ping_pinger_db:create(Name2, Type, UserId, Endpoint, list_to_integer(Frequency) * 1000, Data) of
-    {ok, _}    -> [201, <<"{status: ok}">>];
+    {ok, Id} -> ping_pinger_sup:start_pinger({Id,Name2,list_to_atom(Type),UserId,Endpoint,Frequency*1000,Data}),
+      [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
   end;
 
