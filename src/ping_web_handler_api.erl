@@ -26,7 +26,7 @@ handle(R, State) ->
     <<"user">>         -> handle_user(Method, Args, Req, Session);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
-    <<"pinger">>       -> handle_pinger(Method, Args, Req, Session);
+    <<"pinger">>       -> handle_pinger(LoggedIn, Method, Args, Req, Session);
     <<"subscription">> -> handle_subscription(Method, Args, Req);
     <<"alert">>        -> handle_alert(Method, Args, Req);
     <<"firehose">>     -> handle_firehose(Method, Args, Req);
@@ -90,12 +90,14 @@ handle_logout('POST', _Args, _Req, Session) ->
 handle_logout(_, _, _, _) ->
   ?NOT_FOUND.
 
-handle_pinger('PUT', _Args, Req, Session) ->
-  % TODO: Check for session auth
-
+handle_pinger(true, 'PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
   lager:info("Qs: ~p\n", [Qs]),
   [Name, Type, Endpoint, Frequency] = get_parameters(Qs, [<<"name">>, <<"type">>, <<"endpoint">>, <<"frequency">>]),
+  Name2 = case Name of
+    [] -> Endpoint;
+    N -> N
+  end,
   Data = case Type of
     "http" ->
       [Method, Status] = get_parameters(Qs, [<<"web_method">>, <<"web_status">>]),
@@ -104,11 +106,12 @@ handle_pinger('PUT', _Args, Req, Session) ->
   end,
   lager:info("Data: ~p\n", [Data]),
   UserId = proplists:get_value(uid, Session),
-  case ping_pinger_db:create(Name, Type, UserId, Endpoint, list_to_integer(Frequency) * 1000, Data) of
+  case ping_pinger_db:create(Name2, Type, UserId, Endpoint, list_to_integer(Frequency) * 1000, Data) of
     {ok, _}    -> [201, <<"{status: ok}">>];
     {_, Error} -> [400, list_to_binary(Error)]
   end;
-handle_pinger('DELETE', Args, _Req, _Session) ->
+
+handle_pinger(true, 'DELETE', Args, _Req, _Session) ->
   Id = lists:nth(1, Args),
   Rows = ping_pinger_db:delete( binary_to_list(Id) ),
   case Rows of
@@ -117,7 +120,8 @@ handle_pinger('DELETE', Args, _Req, _Session) ->
     _ -> Response = "{status: ok}",
       [200, Response]
   end;
-handle_pinger(_, _, _, _) ->
+
+handle_pinger(_, _, _, _, _) ->
   ?NOT_FOUND.
 
 handle_subscription('PUT', _Args, Req) ->
