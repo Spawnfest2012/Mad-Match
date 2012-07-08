@@ -197,6 +197,7 @@ seed() ->
   {ok,Migration} = file:read_file("util/migration.sql"),
   lager:info("Migration ~p",[Migration]),
   
+
   emysql:execute(ping_db,Migration),
 
 
@@ -219,5 +220,4 @@ seed() ->
   
 
   ok.
-
 
