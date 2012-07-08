@@ -6,7 +6,6 @@
 
 handle_ping(Pinger) ->
   Data = jsx:decode(Pinger#pinger.data),
-  lager:info("ping_pinger_http: Pinging ",[]),
   Status = case lists:keyfind("status", 1, Data) of
     false -> "200";
     {_, S} -> S
@@ -18,8 +17,6 @@ handle_ping(Pinger) ->
   end,
 
   Response = ibrowse:send_req(Pinger#pinger.end_point, [], Method),
-  lager:info("Matching with status: ~p\n", [Status]),
-  lager:info("ping_pinger_http :: RESPONSE :: ~p\n", [Response]),
   case Response of
     {ok, Status, _, _} -> up;
     _ -> down
