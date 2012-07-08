@@ -26,6 +26,8 @@ CREATE TABLE `pingers` (
  `data` TEXT
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;
 
+ALTER TABLE `pingers` ADD INDEX (`user_id`);
+
 DROP TABLE IF EXISTS `subscriptions`;
 
 CREATE TABLE `subscriptions` (
@@ -35,5 +37,18 @@ CREATE TABLE `subscriptions` (
  `pinger_id` INT NOT NULL ,
  `down_time` INT NOT NULL ,
  `notify_when_up` BOOL NOT NULL DEFAULT  '0',
+ `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE = INNODB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `subscriptions` ADD INDEX (`user_id`);
+ALTER TABLE `subscriptions` ADD INDEX (`pinger_id`);
+
+DROP TABLE IF EXISTS `chats`;
+
+CREATE TABLE `chats` (
+ `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+ `pinger_id` INT NOT NULL ,
+ `user_id` INT NOT NULL ,
+ `message` TINYTEXT NULL ,
  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;

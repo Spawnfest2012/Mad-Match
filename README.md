@@ -1,5 +1,5 @@
 
-Pingterest - social pinging
+Pingtere.st - social pinging - http://pingtere.st
 ==========
 Pingterest is the tool to track and ping the servers you love. 
 The goal is to take a common question - is my server down? And make it fun. 

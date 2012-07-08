@@ -18,8 +18,9 @@
   }).
 
 -define(SESSION_SIZE, 30).
--define(SESSION_TIMEOUT, 1000 * 5).
--define(NEXT_SESSION_TIMEOUT, ?SESSION_TIMEOUT + calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:now()))).
+-define(SESSION_TIMEOUT, 5).
+-define(NOW, calendar:datetime_to_gregorian_seconds(calendar:now_to_datetime(erlang:now()))).
+-define(NEXT_SESSION_TIMEOUT, ?SESSION_TIMEOUT + ?NOW).
 -define(PINGTEREST_SESSION, <<"pingterest_session">>).
 
 %% ====================================================================
@@ -42,7 +43,6 @@ is_logged_in(Proplist) ->
 -spec create_or_update_cowboy_session_request(any()) -> {ok, any()}.
 create_or_update_cowboy_session_request(Req) -> 
   {OldSession,_} = cowboy_http_req:cookie(?PINGTEREST_SESSION, Req),
-  lager:warning("old session is ~p ~n",[OldSession]),
   {Sid, Proplist} = get_session(OldSession),
 
   %% special case - insert an 'is_logged_in' property because many controllers need this
@@ -121,10 +121,16 @@ handle_call({save_session, Sid, Proplist}, _From, State = #state{tablepid=Tid}) 
   {reply, Reply, State};
 
 handle_call({get_session, Sid}, _From, State = #state{tablepid=Tid}) ->
+  Now = ?NOW,
   Reply = case ets:lookup(Tid,Sid) of
-    [] -> new_session(Tid,none);
-
-    [#sid{sid=Sid,proplist=Proplist}] -> {Sid,Proplist}
+    [#sid{sid=Sid,proplist=Proplist,time=Time}] when Time >= Now ->
+      lager:debug("session still valid time: ~p now: ~p ~n",[Time,Now]),
+      {Sid,Proplist};
+    [#sid{sid=Sid,proplist=Proplist,time=Time}] -> 
+      lager:debug("session expired. ",[]), 
+      ets:delete(Tid,Sid),
+      new_session(Tid,none);
+    _ -> new_session(Tid,none)
   end,
   {reply, Reply, State};
 

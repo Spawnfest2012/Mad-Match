@@ -194,7 +194,7 @@ random_string(Len) ->
 -spec seed() -> ok.
 seed() ->
   
-  {ok,Migration} = file:read_file("src/migration.sql"),
+  {ok,Migration} = file:read_file("util/migration.sql"),
   lager:info("Migration ~p",[Migration]),
   
 
