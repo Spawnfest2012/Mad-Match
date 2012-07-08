@@ -39,7 +39,7 @@ jQuery(function($) {
 </script>
 <div id="signup">
     <div id="signup_header">
-        <img src="/images/pingterest_small.png"/>
+      {% include "logo.dtl" %}
     </div>
     <h1>Add your Pingterest</h1>
     <div id="signup_form">
