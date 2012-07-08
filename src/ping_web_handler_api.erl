@@ -29,7 +29,6 @@ handle(R, State) ->
     <<"pinger">>       -> handle_pinger(LoggedIn, Method, Args, Req, Session);
     <<"subscription">> -> handle_subscription(Method, Args, Req);
     <<"alert">>        -> handle_alert(Method, Args, Req);
-    <<"firehose">>     -> handle_firehose(Method, Args, Req);
     _                  -> handle_unknown(Method, Args, Req)
   end,
   lager:info("Response> Status: ~p, Response: ~p\n", [Status, Response]),
@@ -48,10 +47,7 @@ get_parameters(Qs, Params) ->
 
 get_parameter(Key, Qs) ->
   Value = proplists:get_value(Key, Qs),
-  to_list(Value).
-
-to_list(V) when is_binary(V) -> binary_to_list(V);
-to_list(V) -> V.
+  ping_utils:safe_binary_to_list(Value).
 
 handle_user('PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
@@ -154,10 +150,7 @@ handle_subscription(_, _, _) ->
   ?NOT_FOUND.
 
 handle_alert('PUT', _Args, _Req) ->
-  [200, <<"<body>Alert Created</body>">>].
-
-handle_firehose('GET', _Args, _Req) ->
-  [200, <<"<body> Here is your f*****g firehose </body>">>].
+  [501, <<"TBD">>].
 
 handle_unknown(_Object, _Args, _Req) ->
   [404, <<"404 dude">>].
