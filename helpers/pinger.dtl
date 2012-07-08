@@ -1,4 +1,4 @@
-<div class="pinger grid_1" id="{{id}}">
+<div class="pinger col"  id="{{id}}">
   <div class="pinger_holder">
     <div class="actions">
       <a class="button_action" id="action_{{id}}" href="/subscribe/{{id}}/">
@@ -7,7 +7,7 @@
     </div>
     {# middle of the ping  #}
     <div class="server_image">
-      <img class="pinger" src="http://media-cache-ec3.pinterest.com/upload/284219426453094726_AM2ZwHfR_b.jpg">
+      <img class="logo" src="http://media-cache-ec3.pinterest.com/upload/284219426453094726_AM2ZwHfR_b.jpg">
 
     </div>
     <p class="server_name">&nbsp;{{ name }}</p>

@@ -15,6 +15,42 @@ jQuery(function($) {
     
   });
 
+  var $container = $('#pingboard');
+    
+    $container.imagesLoaded(function(){
+      $container.masonry({
+        itemSelector: '.pinger',
+        columnWidth : function( containerWidth ) {
+              return 20;
+        },
+        isFitWidth: true,
+        gutterwidth: 200
+      });
+    });
+    
+    $container.infinitescroll({
+      navSelector  : '#page-nav',    // selector for the paged navigation 
+      nextSelector : '#page-nav a',  // selector for the NEXT link (to page 2)
+      itemSelector : '.pinger',     // selector for all items you'll retrieve
+      loading: {
+          finishedMsg: 'No more pingers to load.',
+          img: 'http://i.imgur.com/6RMhx.gif'
+        }
+      },
+      // trigger Masonry as a callback
+      function( newElements ) {
+        // hide new items while they are loading
+        var $newElems = $( newElements ).css({ opacity: 0 });
+        // ensure that images load before adding to masonry layout
+        $newElems.imagesLoaded(function(){
+          // show elems now they're ready
+          $newElems.animate({ opacity: 1 });
+          $container.masonry( 'appended', $newElems, true ); 
+        });
+      }
+    );
+
+
 
 });
 </script>
@@ -23,7 +59,7 @@ jQuery(function($) {
   <div class="grid_3">
   <div id="logo"><img src="/images/pingterest_small.png"></div>
   </div>
-  <div class="grid_2">
+  <div class="grid_1">
   <ul class="menu">
       {% if is_logged_in %}
       <li><a href="/addping">Add</a></li>
@@ -35,4 +71,10 @@ jQuery(function($) {
   </ul>
   </div>
 </div>
+
+{% include "pingboard.dtl" %}
+<nav id="page-nav">
+  <a href="../pages/2.html"></a>
+</nav>
 </div>
+
