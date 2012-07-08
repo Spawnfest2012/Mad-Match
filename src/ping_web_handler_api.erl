@@ -127,7 +127,11 @@ handle_pinger(_, _, _, _, _) ->
 handle_subscription('PUT', _Args, Req) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
   [T, U, P, D, N] = get_parameters(Qs, [<<"type">>, <<"user_id">>, <<"pinger_id">>, <<"down_time">>, <<"notify_when_up">>]),
-  case ping_subscription_db:create(T, U, P, D, N) of
+  Notify = case N of
+    "on" -> "1";
+    _ -> "0"
+  end,
+  case ping_subscription_db:create(T, U, P, D, Notify) of
     {ok, Id} ->
       Response = "{status: ok}, {response: {id:" ++ integer_to_list(Id) ++ "}",
       [201, Response];
