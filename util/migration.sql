@@ -23,7 +23,7 @@ CREATE TABLE `pingers` (
  `last_status` VARCHAR( 50 ) NULL ,
  `last_check` BIGINT NOT NULL DEFAULT 0,
  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- `pic_url` TEXT NULL,
+ `location` TEXT NULL,
  `data` TEXT
 ) ENGINE = INNODB DEFAULT CHARSET=latin1;
 
@@ -45,13 +45,3 @@ CREATE TABLE `subscriptions` (
 
 ALTER TABLE `subscriptions` ADD INDEX (`user_id`);
 ALTER TABLE `subscriptions` ADD INDEX (`pinger_id`);
-
-DROP TABLE IF EXISTS `chats`;
-
-CREATE TABLE `chats` (
- `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
- `pinger_id` INT NOT NULL ,
- `user_id` INT NOT NULL ,
- `message` TINYTEXT NULL ,
- `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE = INNODB DEFAULT CHARSET=latin1;

@@ -25,7 +25,7 @@ handle(R, State) ->
   LoggedIn = ping_session:is_logged_in(Session),
   lager:info("Logged in: ~p Method: ~p || Object: ~p || Args: ~p\n", [LoggedIn, Method, Object, Args]),
   [Status, Response] = case Object of
-    <<"user">>         -> handle_user(Method, Args, Req, Session);
+    <<"user">>         -> handle_user(LoggedIn, Method, Args, Req, Session);
     <<"login">>        -> handle_login(Method, Args, Req, Session);
     <<"logout">>       -> handle_logout(Method, Args, Req, Session);
     <<"pinger">>       -> handle_pinger(LoggedIn, Method, Args, Req, Session);
@@ -51,7 +51,7 @@ get_parameter(Key, Qs) ->
   Value = proplists:get_value(Key, Qs),
   ping_utils:safe_binary_to_list(Value).
 
-handle_user('PUT', _Args, Req, Session) ->
+handle_user(_, 'PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
   [N, E, P, T,Twitter] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>,<<"twitter">>]),
   lager:warning("creating a guy: ~p ~p ~p ~p ~p ~n", [N, E, P, T,Twitter]),
@@ -65,7 +65,23 @@ handle_user('PUT', _Args, Req, Session) ->
       Response = "{status: error}, {response: {msg:" ++ Error ++ "}",
       [400, Response]
   end;
-handle_user(_, _, _, _) ->
+
+%% edit
+handle_user(true, 'POST', _Args, Req, Session) ->
+  {Qs, _} = cowboy_http_req:body_qs(Req),
+  [N, E, P, T,Twitter] = get_parameters(Qs, [<<"name">>, <<"email">>, <<"password">>, <<"tagline">>,<<"twitter">>]),
+  Id = proplists:get_value(uid,Session),
+  lager:warning("updating some guy: ~p ~p ~p ~p ~p ~p ~n", [Id, N, E, P, T,Twitter]),
+  case ping_user_db:update(Id, N, E, P, T,Twitter) of
+    ok ->
+      Response = "{status: ok}, {response: {}",
+      [200, Response];
+    {error, Error} ->
+      lager:warning("ERROR: ~p\n", [Error]),
+      Response = "{status: error}, {response: {msg:" ++ Error ++ "}",
+      [400, Response]
+  end;
+handle_user(_, _, _, _, _) ->
   ?NOT_FOUND.
 
 handle_login('POST', _Args, Req, Session) ->
@@ -90,7 +106,7 @@ handle_logout(_, _, _, _) ->
 
 handle_pinger(true, 'PUT', _Args, Req, Session) ->
   {Qs, _} = cowboy_http_req:body_qs(Req),
-  [Name, Type, Endpoint, Frequency, PicUrl] = get_parameters(Qs, [<<"name">>, <<"type">>, <<"endpoint">>, <<"frequency">>, <<"pic_url">>]),
+  [Name, Type, Endpoint, Frequency, Location] = get_parameters(Qs, [<<"name">>, <<"type">>, <<"endpoint">>, <<"frequency">>, <<"location">>]),
   Name2 = case Name of
     [] -> Endpoint;
     N -> N
@@ -104,7 +120,7 @@ handle_pinger(true, 'PUT', _Args, Req, Session) ->
   lager:info("Data: ~p\n", [Data]),
   UserId = proplists:get_value(uid, Session),
   FrequencyMs = ?STRING_TO_MS(Frequency),
-  case ping_pinger_db:create(Name2, Type, UserId, Endpoint, FrequencyMs, Data, PicUrl) of
+  case ping_pinger_db:create(Name2, Type, UserId, Endpoint, FrequencyMs, Data, Location) of
     {ok, Id} ->
       % Subscribe creator user
       ping_subscription_db:create("email", UserId, Id, FrequencyMs, 1, FrequencyMs),

@@ -39,7 +39,10 @@ up(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     down ->
-      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"down"},{last_check,ping_utils:now()}]),
+      Now = ping_utils:now(),
+      ping_web_handler_ws:notify((State#state.pinger)#pinger.id,<<"down">>,
+                                 list_to_binary("Down for " ++ ping_utils:time_diff_now(Now))),
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"down"},{last_check,Now}]),
       {next_state, down,
        %% I'm setting the last_notification_time, I know it's odd.
        State#state{down_since = ping_utils:now(),last_notification_time = ping_utils:now()},
@@ -52,7 +55,10 @@ down(timeout, State) ->
   NextState = ?GET_MODULE(State):handle_ping(State#state.pinger),
   case NextState of
     up ->
-      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"up"},{last_check,ping_utils:now()}]),
+      Now = ping_utils:now(),
+            ping_web_handler_ws:notify((State#state.pinger)#pinger.id,<<"up">>,
+                                       list_to_binary("Responding for " ++ ping_utils:time_diff_now(Now))),
+      ping_pinger_db:update((State#state.pinger)#pinger.id,[{last_status,"up"},{last_check,Now}]),
       Event = #event{type = pinger_up,pinger = State#state.pinger},
       case State#state.notify_up of
         true  -> ping_notifier:notify(Event);

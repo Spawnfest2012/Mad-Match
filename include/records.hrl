@@ -11,7 +11,7 @@
                  user_name :: string(),
                  user_tagline :: string(),
                  created_at :: term(),
-                 pic_url :: string()
+                 location :: string()
                 }).
 -record(subscription,{ id             :: pos_integer(),
                        type           :: email | twitter,

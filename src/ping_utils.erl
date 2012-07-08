@@ -5,7 +5,7 @@
 
 -export([rfc2882/0, rfc2882/1, rfc3339/1, iso8601/0, iso8601/1, dateadd/2,
          make_pairs/1, safe_term_to_binary/1, safe_binary_to_list/1, safe_list_to_float/1, binary_to_integer/1, to_lower/1,
-         now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1,
+         now/0, get_all_env/0, get_env/1, set_env/2, stop_timer/1, 
          random_string/1,seed/0,as_record/1]).
 
 -export([pad_to16/1]).
@@ -270,27 +270,28 @@ seed() ->
   {ok,Uid2} = ping_user_db:create("Chad Depue","chad@inaka.net","chad","United States", "@chaddepue"),
   {ok,Uid3} = ping_user_db:create("Gustavo Chain","gustavo@inaka.net","gustavo","Chile", "@gchaincl"),
   {ok,Uid4} = ping_user_db:create("Marcos Almonacid","marcos@inaka.net","marcos","Argentina", "@marcosamilcar"),
+  {ok,Uid5} = ping_user_db:create("google.com","google@google.com","google","Search Engine Giant", "@google"),
 
-  Pingers = [{"Prod1","ping",Uid1,"prod1.whisper.sh",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Prod3","ping",Uid2,"prod3.whisper.sh",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Prod4","ping",Uid3,"prod4.whisper.sh",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Prod5","ping",Uid4,"prod5.whisper.sh",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"},
-    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "http://learnyousomeerlang.com/static/img/cupcake.png"}
+  Pingers = [{"Google DNS","ping",Uid5,"8.8.8.8",120000,[], "Mountain View, California"},
+    {"Prod3","ping",Uid2,"prod3.whisper.sh",120000,[], "New York, NY"},
+    {"Prod4","ping",Uid3,"prod4.whisper.sh",120000,[], "New York, NY"},
+    {"Prod5","ping",Uid4,"prod5.whisper.sh",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid1,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid2,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid3,"mtv.inakalabs.com",120000,[], "New York, NY"},
+    {"Mtv","ping",Uid4,"mtv.inakalabs.com",120000,[], "New York, NY"}
   ],
 
 

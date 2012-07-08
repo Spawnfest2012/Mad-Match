@@ -34,8 +34,6 @@ jQuery(function($) {
     }
   });
 
-
-  });
 </script>
 <div id="signup">
     <div id="signup_header">
@@ -70,7 +68,7 @@ jQuery(function($) {
                 <select name="web_status" id="web_status">
                     <option value="100">100 Continue </option>
                     <option value="101">101 Switching Protocols </option>
-                    <option value="200">200 OK </option>
+                    <option value="200" SELECTED >200 OK </option>
                     <option value="201">201 Created </option>
                     <option value="202">202 Accepted </option>
                     <option value="203">203 Non-authoritative Information </option>
@@ -125,12 +123,12 @@ jQuery(function($) {
             <label class="slightly_smaller">Optional Label</label>
             <div id="clear"></div>
 
-            <input type="text" id="pic_url" name="pic_url" value="http://"  placeholder="Pic Url">
-            <label class="slightly_smaller">Pic Url</label>
+            <input type="text" id="location" name="location" value=""  placeholder="Location">
+            <label class="slightly_smaller">Location</label>
             <div id="clear"></div>
 
             <a href="#" class="button">
-                I'm Pingterested
+                Start Pinging!
             </a>
         </form>
     </div>
